@@ -8,14 +8,12 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { SelfRating } from '../constants';
 
-// Mirrors SelfRatingSchema — one source of truth per layer, values must match.
-export const selfRatingEnum = pgEnum('self_rating', [
-  'poor',
-  'below',
-  'above',
-  'strong',
-]);
+export const selfRatingPgEnum = pgEnum(
+  'self_rating',
+  Object.values(SelfRating) as [SelfRating, ...SelfRating[]]
+);
 
 export const sessions = pgTable(
   'sessions',
@@ -27,10 +25,7 @@ export const sessions = pgTable(
       .notNull()
       .defaultNow(),
   },
-  table => [
-    // Dashboard and summary queries filter/sort by when practice happened.
-    index('sessions_occurred_at_idx').on(table.occurredAt),
-  ]
+  table => [index('sessions_occurred_at_idx').on(table.occurredAt)]
 );
 
 export const entries = pgTable(
@@ -43,12 +38,9 @@ export const entries = pgTable(
     instrument: text('instrument'),
     focus: text('focus').array().notNull().default([]),
     durationMin: integer('duration_min'),
-    selfRating: selfRatingEnum('self_rating'),
+    selfRating: selfRatingPgEnum('self_rating'),
   },
-  table => [
-    // Every "load a session's entries" query hits this.
-    index('entries_session_id_idx').on(table.sessionId),
-  ]
+  table => [index('entries_session_id_idx').on(table.sessionId)]
 );
 
 export const sessionsRelations = relations(sessions, ({ many }) => ({

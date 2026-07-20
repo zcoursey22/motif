@@ -1,25 +1,19 @@
 import 'dotenv/config';
 import { db } from '../src/lib/db/client';
 import { sessions, entries } from '../src/lib/db/schema';
+import { Entry, Session } from '@/src/lib/schemas';
+import { SelfRating } from '@/src/lib/constants';
 
-type SeedEntry = {
-  instrument: string | null;
-  focus: string[];
-  durationMin: number | null;
-  selfRating: 'poor' | 'below' | 'above' | 'strong' | null;
-};
+type SeedEntry = Omit<Entry, 'id' | 'sessionId'>;
 
-type SeedSession = {
-  rawText: string;
-  occurredAt: Date;
-  createdAt: Date;
+type SeedSession = Omit<Session, 'id'> & {
   entries: SeedEntry[];
 };
 
 const seedData: SeedSession[] = [
   {
     rawText:
-      'Worked on ii-V-I voicings for 40 min, then ran Giant Steps changes, felt shaky on the bridge',
+      'Worked on ii-V-I voicings for 40 min on keys, then ran Giant Steps changes, felt shaky on the bridge',
     occurredAt: new Date('2026-06-22'),
     createdAt: new Date('2026-06-22'),
     entries: [
@@ -27,7 +21,7 @@ const seedData: SeedSession[] = [
         instrument: 'piano',
         focus: ['jazz', 'voicings', '251'],
         durationMin: 40,
-        selfRating: 'above',
+        selfRating: SelfRating.ABOVE,
       },
       {
         instrument: 'piano',
@@ -47,7 +41,7 @@ const seedData: SeedSession[] = [
         instrument: 'guitar',
         focus: ['jazz', 'comping', 'rhythm'],
         durationMin: null,
-        selfRating: 'strong',
+        selfRating: SelfRating.STRONG,
       },
       {
         instrument: 'guitar',
@@ -67,7 +61,7 @@ const seedData: SeedSession[] = [
         instrument: 'guitar',
         focus: ['classical', 'scales'],
         durationMin: 11,
-        selfRating: 'above',
+        selfRating: SelfRating.ABOVE,
       },
     ],
   },
@@ -87,7 +81,7 @@ const seedData: SeedSession[] = [
         instrument: 'trombone',
         focus: ['scales'],
         durationMin: null,
-        selfRating: 'below',
+        selfRating: SelfRating.BELOW,
       },
     ],
   },
@@ -101,9 +95,14 @@ const seedData: SeedSession[] = [
         instrument: 'trombone',
         focus: ['scales', 'intonation'],
         durationMin: 20,
-        selfRating: 'below',
+        selfRating: SelfRating.BELOW,
       },
-      { instrument: 'violin', focus: [], durationMin: 15, selfRating: 'poor' },
+      {
+        instrument: 'violin',
+        focus: [],
+        durationMin: 15,
+        selfRating: SelfRating.POOR,
+      },
     ],
   },
   {
@@ -116,13 +115,13 @@ const seedData: SeedSession[] = [
         instrument: 'piano',
         focus: ['jazz', 'voicings', '251'],
         durationMin: 30,
-        selfRating: 'below',
+        selfRating: SelfRating.BELOW,
       },
       {
         instrument: 'guitar',
         focus: ['jazz', 'comping'],
         durationMin: 20,
-        selfRating: 'strong',
+        selfRating: SelfRating.STRONG,
       },
     ],
   },
@@ -136,7 +135,7 @@ const seedData: SeedSession[] = [
         instrument: 'violin',
         focus: ['intonation'],
         durationMin: 15,
-        selfRating: 'below',
+        selfRating: SelfRating.BELOW,
       },
     ],
   },
@@ -150,7 +149,7 @@ const seedData: SeedSession[] = [
         instrument: 'trumpet',
         focus: ['long tones', 'breath support'],
         durationMin: 15,
-        selfRating: 'above',
+        selfRating: SelfRating.ABOVE,
       },
       {
         instrument: 'trumpet',
@@ -170,7 +169,7 @@ const seedData: SeedSession[] = [
         instrument: null,
         focus: ['theory', 'harmony', 'modal interchange'],
         durationMin: 25,
-        selfRating: 'strong',
+        selfRating: SelfRating.STRONG,
       },
     ],
   },
@@ -184,7 +183,7 @@ const seedData: SeedSession[] = [
         instrument: 'trombone',
         focus: ['scales', 'intonation'],
         durationMin: 25,
-        selfRating: 'above',
+        selfRating: SelfRating.ABOVE,
       },
     ],
   },
@@ -198,9 +197,14 @@ const seedData: SeedSession[] = [
         instrument: null,
         focus: ['theory', 'harmony', 'jazz'],
         durationMin: 30,
-        selfRating: 'above',
+        selfRating: SelfRating.ABOVE,
       },
-      { instrument: 'violin', focus: [], durationMin: 15, selfRating: 'poor' },
+      {
+        instrument: 'violin',
+        focus: [],
+        durationMin: 15,
+        selfRating: SelfRating.POOR,
+      },
     ],
   },
 ];

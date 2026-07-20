@@ -1,15 +1,22 @@
 import { z } from 'zod';
+import { SelfRating } from './constants';
 
-export const SelfRatingSchema = z.enum(['poor', 'below', 'above', 'strong']);
-
-export const EntrySchema = z.object({
+export const EntryFields = z.object({
   id: z.string(),
   sessionId: z.string(),
   instrument: z.string().min(1).nullable(),
   focus: z.array(z.string().min(1)).default([]),
   durationMin: z.number().int().positive().nullable(),
-  selfRating: SelfRatingSchema.nullable(),
+  selfRating: z.enum(SelfRating).nullable(),
 });
+
+export const EntrySchema = EntryFields.refine(
+  (e: { instrument: string | null; focus: string[] }) =>
+    e.instrument !== null || e.focus.length > 0,
+  {
+    message: 'Entry needs an instrument or at least one focus area',
+  }
+);
 
 export const SessionSchema = z.object({
   id: z.string(),
