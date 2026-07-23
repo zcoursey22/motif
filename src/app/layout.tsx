@@ -27,7 +27,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="h-full flex flex-col">
+        <header className="border-b-1 border-gray-600 px-4 py-2 bg-gray-900">
+          <h1 className="text-lg">Motif</h1>
+        </header>
+        <div className="flex grow flex-col bg-gray-900">{children}</div>
+        <footer className="border-t-1 border-gray-600 px-4 py-2 bg-gray-900">
+          Built by Zach Coursey
+        </footer>
+      </body>
     </html>
   );
 }
