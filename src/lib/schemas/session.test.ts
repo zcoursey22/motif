@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { z } from 'zod';
-import { EntrySchema } from './schemas';
-import { SelfRating } from './constants';
+import { EntrySchema } from './session';
+import { SelfRating } from '../constants';
 
 export function expectParseSuccess<T>(
   result: z.ZodSafeParseResult<T>
@@ -29,6 +29,12 @@ const entryBase = {
   durationMin: 40,
   selfRating: SelfRating.ABOVE,
 };
+
+describe('SessionSchema', () => {
+  it('TODO', () => {
+    expect(true);
+  });
+});
 
 describe('EntrySchema', () => {
   it('accepts a fully populated valid entry', () => {

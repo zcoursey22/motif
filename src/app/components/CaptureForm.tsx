@@ -2,16 +2,28 @@
 
 import { Play } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useParse } from '../hooks/useParse';
+import { ParsedEntry } from '@/lib/schemas/parse';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
+
+  const [entries, setEntries] = useState<ParsedEntry[] | null>(null);
+
+  const { mutate } = useParse();
 
   const rawTextHasValue = rawText.trim().length > 0;
 
   const handleSubmit = () => {
     if (!rawTextHasValue) return;
     setRawText('');
+    mutate(rawText, {
+      onSuccess: entries => {
+        setEntries(entries);
+        console.log(entries);
+      },
+    });
   };
 
   const handleTextAreaContainerClick = (e: React.MouseEvent) => {

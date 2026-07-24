@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SelfRating } from './constants';
+import { SelfRating } from '../constants';
 
 export const EntryFields = z.object({
   id: z.string(),

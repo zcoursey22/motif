@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { db } from '../src/lib/db/client';
 import { sessions, entries } from '../src/lib/db/schema';
-import { Entry, Session } from '@/src/lib/schemas';
-import { SelfRating } from '@/src/lib/constants';
+import { Entry, Session } from '@/lib/schemas/session';
+import { SelfRating } from '@/lib/constants';
 
 type SeedEntry = Omit<Entry, 'id' | 'sessionId'>;
 

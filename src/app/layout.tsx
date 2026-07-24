@@ -4,6 +4,7 @@ import './globals.css';
 import { Activity } from 'lucide-react';
 import { LuGithub, LuLinkedin } from 'react-icons/lu';
 import Link from 'next/link';
+import { Providers } from './providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,38 +33,40 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="h-full flex flex-col">
-        <header className="flex px-4 py-2 bg-neutral-100 dark:bg-neutral-800">
-          <Link href="/" className="flex gap-2 px-4 py-2">
-            <Activity size={28} aria-hidden />
-            <span className="text-xl">Motif</span>
-          </Link>
-        </header>
-        <div className="flex grow flex-col bg-neutral-100 dark:bg-neutral-800">
-          {children}
-        </div>
-        <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={'https://github.com/zcoursey22/motif'}
-            className="hover:underline underline-offset-3 decoration-2 text-neutral-700 dark:text-neutral-200 p-2 inline-flex gap-2 items-center"
-          >
-            Source
-            <LuGithub size={16} aria-hidden />
-          </a>
-          <span>
-            Built by
+        <Providers>
+          <header className="flex px-4 py-2 bg-neutral-100 dark:bg-neutral-800">
+            <Link href="/" className="flex gap-2 px-4 py-2">
+              <Activity size={28} aria-hidden />
+              <span className="text-xl">Motif</span>
+            </Link>
+          </header>
+          <div className="flex grow flex-col bg-neutral-100 dark:bg-neutral-800">
+            {children}
+          </div>
+          <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800">
             <a
               target="_blank"
-              rel="noopener noreferrer me"
-              href={'https://linkedin.com/in/zach-coursey'}
+              rel="noopener noreferrer"
+              href={'https://github.com/zcoursey22/motif'}
               className="hover:underline underline-offset-3 decoration-2 text-neutral-700 dark:text-neutral-200 p-2 inline-flex gap-2 items-center"
             >
-              Zach Coursey
-              <LuLinkedin size={16} aria-hidden />
+              Source
+              <LuGithub size={16} aria-hidden />
             </a>
-          </span>
-        </footer>
+            <span>
+              Built by
+              <a
+                target="_blank"
+                rel="noopener noreferrer me"
+                href={'https://linkedin.com/in/zach-coursey'}
+                className="hover:underline underline-offset-3 decoration-2 text-neutral-700 dark:text-neutral-200 p-2 inline-flex gap-2 items-center"
+              >
+                Zach Coursey
+                <LuLinkedin size={16} aria-hidden />
+              </a>
+            </span>
+          </footer>
+        </Providers>
       </body>
     </html>
   );
