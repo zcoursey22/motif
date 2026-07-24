@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { EntryFields } from './session';
 
 export const ParseRequestSchema = z.object({
-  rawText: z.string().trim().min(1).max(2000),
+  rawText: z.string().trim().min(1).max(500),
 });
 
 export const ParsedEntrySchema = EntryFields.omit({
@@ -22,6 +22,12 @@ export const ParseErrorCode = {
 } as const;
 export type ParseErrorCode =
   (typeof ParseErrorCode)[keyof typeof ParseErrorCode];
+
+export class ParseError extends Error {
+  constructor(public code: ParseErrorCode) {
+    super(code);
+  }
+}
 
 export type ParseRequest = z.infer<typeof ParseRequestSchema>;
 export type ParseResponse = z.infer<typeof ParseResponseSchema>;

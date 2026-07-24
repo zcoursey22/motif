@@ -59,7 +59,12 @@ export async function POST(req: Request) {
 
   try {
     const entries = await parse(input.data.rawText);
-    return NextResponse.json({ entries });
+    const responses = [
+      NextResponse.json({ entries }),
+      NextResponse.json({ entries: [] }),
+      fail(ParseErrorCode.INTERNAL_ERROR),
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
   } catch (e) {
     console.error(e);
     return fail(ParseErrorCode.INTERNAL_ERROR);
