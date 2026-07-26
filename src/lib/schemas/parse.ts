@@ -32,3 +32,14 @@ export class ParseError extends Error {
 export type ParseRequest = z.infer<typeof ParseRequestSchema>;
 export type ParseResponse = z.infer<typeof ParseResponseSchema>;
 export type ParsedEntry = z.infer<typeof ParsedEntrySchema>;
+
+const parseErrorCodeMessageMap = {
+  [ParseErrorCode.VALIDATION_FAILED]: 'Invalid summary text.',
+  [ParseErrorCode.TIMEOUT]: 'Parsing timed out.',
+  [ParseErrorCode.RATE_LIMIT]: 'Too many attempts. Try again later.',
+  [ParseErrorCode.INTERNAL_ERROR]: 'Something went wrong.',
+};
+
+export const getParseErrorCodeMessage = (code: string) => {
+  return parseErrorCodeMessageMap[code as ParseErrorCode];
+};

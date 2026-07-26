@@ -1,9 +1,18 @@
 'use client';
 
-import { Activity, Disc3, Plus, SkipBack, SkipForward, X } from 'lucide-react';
+import {
+  Activity,
+  CircleAlert,
+  Disc3,
+  InfoIcon,
+  Plus,
+  SkipBack,
+  SkipForward,
+  X,
+} from 'lucide-react';
 import { useReducer, useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
-import { ParsedEntry } from '@/lib/schemas/parse';
+import { getParseErrorCodeMessage, ParsedEntry } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
@@ -35,7 +44,7 @@ const rowReducer = (
 ): EditableParsedEntryRow[] => {
   switch (action.type) {
     case RowActionType.SET:
-      return action.rows.length ? action.rows : [getEmptyRow()];
+      return action.rows.length ? action.rows : [];
     case RowActionType.UPDATE:
       return state.map(r =>
         r.tempId === action.tempId ? { ...r, ...action.patch } : r
@@ -53,9 +62,7 @@ export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
-  const [rows, dispatchRows] = useReducer(rowReducer, null, () => [
-    getEmptyRow(),
-  ]);
+  const [rows, dispatchRows] = useReducer(rowReducer, null, () => []);
 
   const { mutate, isSuccess, isPending, isError, error, reset } = useParse();
 
@@ -160,9 +167,12 @@ export default function CaptureForm() {
         </div>
       )}
       {!isPending && isError && (
-        <span className="text-red-500 dark:text-red-400">
-          Error: {error.message}
-        </span>
+        <div className="text-red-500 dark:text-red-400 inline-flex gap-2">
+          <CircleAlert />
+          <span className="text-neutral-500 dark:text-neutral-400">
+            {getParseErrorCodeMessage(error.message)}
+          </span>
+        </div>
       )}
       {!isPending && !isError && isSuccess && (
         <div className="flex flex-col w-2xl max-w-[100%] mb-4">
@@ -203,6 +213,14 @@ export default function CaptureForm() {
               <span>Duration</span>
               <span />
             </div>
+            {rows.length === 0 && (
+              <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-4 self-center justify-center inline-flex gap-2 border-t-2 border-neutral-300 dark:border-neutral-700">
+                <InfoIcon />
+                <span className="text-neutral-500 dark:text-neutral-400">
+                  Nothing was parsed. Edit your summary to be more specific.
+                </span>
+              </div>
+            )}
             {rows.map(row => (
               <div
                 key={row.tempId}
