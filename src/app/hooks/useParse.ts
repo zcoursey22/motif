@@ -1,7 +1,7 @@
-import { ParseError, ParseErrorCode } from '@/lib/schemas/parse';
+import { ParsedEntry, ParseError, ParseErrorCode } from '@/lib/schemas/parse';
 import { useMutation } from '@tanstack/react-query';
 
-async function requestParse(rawText: string) {
+async function requestParse(rawText: string): Promise<ParsedEntry[]> {
   const res = await fetch('/api/parse', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

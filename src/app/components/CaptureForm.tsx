@@ -1,35 +1,68 @@
 'use client';
 
-import {
-  Activity,
-  CalendarDays,
-  Disc3,
-  Music,
-  Play,
-  SkipBack,
-  SkipForward,
-  Square,
-  X,
-} from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Activity, Disc3, Plus, SkipBack, SkipForward, X } from 'lucide-react';
+import { useReducer, useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
 import { ParsedEntry } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
 
+enum RowActionType {
+  SET,
+  UPDATE,
+  DELETE,
+  ADD,
+}
+
+type RowAction =
+  | { type: RowActionType.SET; rows: EditableParsedEntryRow[] }
+  | { type: RowActionType.UPDATE; tempId: string; patch: Partial<ParsedEntry> }
+  | { type: RowActionType.DELETE; tempId: string }
+  | { type: RowActionType.ADD };
+
+const getEmptyRow = (): EditableParsedEntryRow => ({
+  tempId: crypto.randomUUID(),
+  instrument: null,
+  focus: [],
+  selfRating: null,
+  durationMin: null,
+});
+
+const rowReducer = (
+  state: EditableParsedEntryRow[],
+  action: RowAction
+): EditableParsedEntryRow[] => {
+  switch (action.type) {
+    case RowActionType.SET:
+      return action.rows.length ? action.rows : [getEmptyRow()];
+    case RowActionType.UPDATE:
+      return state.map(r =>
+        r.tempId === action.tempId ? { ...r, ...action.patch } : r
+      );
+    case RowActionType.DELETE:
+      return state.length <= 1
+        ? state
+        : state.filter(r => r.tempId !== action.tempId);
+    case RowActionType.ADD:
+      return [...state, getEmptyRow()];
+  }
+};
+
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
-  const [entries, setEntries] = useState<EditableParsedEntryRow[] | null>(null);
+  const [rows, dispatchRows] = useReducer(rowReducer, null, () => [
+    getEmptyRow(),
+  ]);
 
-  const { mutate, isPending, isError, error, reset } = useParse();
+  const { mutate, isSuccess, isPending, isError, error, reset } = useParse();
 
   const trimmedLength = rawText.trim().length;
   const rawTextHasValue = trimmedLength > 0 && trimmedLength <= 500;
 
-  const isRawTextAreaLocked = isPending || (!!entries && !isError);
+  const isRawTextAreaLocked = isPending || isSuccess;
 
   const handleParse = () => {
     if (!rawTextHasValue || isRawTextAreaLocked) return;
@@ -38,28 +71,24 @@ export default function CaptureForm() {
     rawTextElement.current?.blur();
     mutate(trimmed, {
       onSuccess: parsed => {
-        setEntries(
-          parsed.map((p: ParsedEntry) => ({
-            ...p,
-            tempId: crypto.randomUUID(),
-          }))
-        );
+        dispatchRows({
+          type: RowActionType.SET,
+          rows: parsed.map(p => ({ ...p, tempId: crypto.randomUUID() })),
+        });
       },
       onError: () => rawTextElement.current?.focus(),
     });
   };
 
-  const handleReset = () => {
-    setRawText('');
-    setEntries(null);
+  const handleBack = () => {
+    dispatchRows({ type: RowActionType.SET, rows: [] });
     reset();
     rawTextElement.current?.focus();
   };
 
   const handleSubmit = () => {
-    if (!entries?.length) return;
     setRawText('');
-    setEntries(null);
+    dispatchRows({ type: RowActionType.SET, rows: [] });
     reset();
     rawTextElement.current?.focus();
   };
@@ -74,15 +103,6 @@ export default function CaptureForm() {
     e.preventDefault();
     handleParse();
   };
-
-  const updateRow = (tempId: string, patch: Partial<ParsedEntry>) =>
-    setEntries(
-      rows =>
-        rows?.map(r => (r.tempId === tempId ? { ...r, ...patch } : r)) ?? null
-    );
-
-  const deleteRow = (tempId: string) =>
-    setEntries(rows => rows?.filter(r => r.tempId !== tempId) ?? null);
 
   return (
     <>
@@ -117,14 +137,14 @@ export default function CaptureForm() {
             {`${trimmedLength} / 500`}
           </span>
           <button
-            className={`border-2 border-transparent items-center gap-2 bg-blue-400 hover:bg-blue-500 dark:bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-400 aria-disabled:bg-slate-300 dark:aria-disabled:bg-slate-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-text pointer-events-auto ${
+            className={`items-center gap-2 bg-blue-400 hover:bg-blue-500 dark:bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-400 aria-disabled:bg-slate-300 dark:aria-disabled:bg-slate-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-text pointer-events-auto ${
               isRawTextAreaLocked ? 'hidden' : 'inline-flex'
             }`}
             aria-disabled={!rawTextHasValue || isRawTextAreaLocked}
             onClick={handleParse}
             aria-label="Parse your practice session summary"
           >
-            <span>Parse</span>
+            Parse
             <SkipForward size={18} strokeWidth={2} />
           </button>
         </div>
@@ -144,16 +164,16 @@ export default function CaptureForm() {
           Error: {error.message}
         </span>
       )}
-      {!isPending && !isError && !!entries && (
-        <div className="flex flex-col w-2xl max-w-[100%]">
+      {!isPending && !isError && isSuccess && (
+        <div className="flex flex-col w-2xl max-w-[100%] mb-4">
           <div className="flex items-center justify-end gap-4 pb-2">
             <button
-              className="inline-flex items-center border-2 border-transparent text-white bg-neutral-400 dark:bg-neutral-500 hover:bg-neutral-500 dark:hover:bg-neutral-400 gap-2 aria-disabled:bg-gray-300 dark:aria-disabled:bg-gray-500 aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
-              onClick={handleReset}
+              className="min-h-[40px] min-w-[40px] justify-center self-stretch inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+              onClick={handleBack}
               aria-label="Back"
             >
               <SkipBack size={18} strokeWidth={2} />
-              <span>Back</span>
+              Back
             </button>
             <div className="flex gap-2 items-center justify-end grow">
               <span className="text-neutral-500 dark:text-neutral-400">
@@ -166,16 +186,16 @@ export default function CaptureForm() {
               />
             </div>
             <button
-              className="border-2 border-transparent inline-flex items-center gap-2 bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 aria-disabled:bg-mist-300 dark:aria-disabled:bg-mist-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
-              aria-disabled={!entries?.length}
+              className="inline-flex items-center gap-2 bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 aria-disabled:bg-mist-300 dark:aria-disabled:bg-mist-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+              aria-disabled={!rows?.length}
               onClick={handleSubmit}
               aria-label="Log session"
             >
-              <span>Log</span>
+              Log
               <Activity size={18} strokeWidth={2} />
             </button>
           </div>
-          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto]">
+          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] mb-2 border-b-2 border-neutral-300 dark:border-neutral-700">
             <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 text-neutral-500 dark:text-neutral-400">
               <span>Instrument</span>
               <span>Focus</span>
@@ -183,7 +203,7 @@ export default function CaptureForm() {
               <span>Duration</span>
               <span />
             </div>
-            {entries.map(row => (
+            {rows.map(row => (
               <div
                 key={row.tempId}
                 className="grid grid-cols-subgrid col-span-5 gap-2 items-stretch py-2 border-t-2 border-neutral-300 dark:border-neutral-700"
@@ -192,8 +212,10 @@ export default function CaptureForm() {
                   type="text"
                   value={row.instrument ?? ''}
                   onChange={e =>
-                    updateRow(row.tempId, {
-                      instrument: e.target.value.trim() || null,
+                    dispatchRows({
+                      type: RowActionType.UPDATE,
+                      tempId: row.tempId,
+                      patch: { instrument: e.target.value.trim() || null },
                     })
                   }
                   className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
@@ -207,11 +229,15 @@ export default function CaptureForm() {
                 <select
                   value={row.selfRating ?? ''}
                   onChange={e =>
-                    updateRow(row.tempId, {
-                      selfRating:
-                        e.target.value === ''
-                          ? null
-                          : (e.target.value as SelfRating),
+                    dispatchRows({
+                      type: RowActionType.UPDATE,
+                      tempId: row.tempId,
+                      patch: {
+                        selfRating:
+                          e.target.value === ''
+                            ? null
+                            : (e.target.value as SelfRating),
+                      },
                     })
                   }
                   className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
@@ -230,22 +256,43 @@ export default function CaptureForm() {
                   onChange={e => {
                     const n =
                       e.target.value === '' ? null : Number(e.target.value);
-                    updateRow(row.tempId, {
-                      durationMin: Number.isFinite(n) ? n : null,
+                    dispatchRows({
+                      type: RowActionType.UPDATE,
+                      tempId: row.tempId,
+                      patch: { durationMin: Number.isFinite(n) ? n : null },
                     });
                   }}
                   className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
                 />
                 <button
-                  className="border-2 border-transparent self-center inline-flex items-center gap-2 hover:text-white text-red-500 hover:bg-red-500 dark:text-red-400 dark:hover:bg-red-400 p-2 rounded-xl cursor-pointer pointer-events-auto"
-                  onClick={() => deleteRow(row.tempId)}
+                  className="min-h-[40px] min-w-[40px] self-center inline-flex justify-center items-center gap-2 hover:text-white text-red-500 hover:bg-red-500 dark:text-red-400 dark:hover:bg-red-400 aria-disabled:hover:text-mauve-300 aria-disabled:text-mauve-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-mauve-500 dark:aria-disabled:hover:text-mauve-500 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+                  onClick={() =>
+                    dispatchRows({
+                      type: RowActionType.DELETE,
+                      tempId: row.tempId,
+                    })
+                  }
                   aria-label="Delete parsed entry row"
+                  aria-disabled={rows.length <= 1}
                 >
                   <X size={18} strokeWidth={2} />
                 </button>
               </div>
             ))}
           </div>
+          <button
+            className="min-h-[40px] min-w-[40px] justify-center self-stretch inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+            onClick={() => {
+              if (rows.length < 10)
+                dispatchRows({
+                  type: RowActionType.ADD,
+                });
+            }}
+            aria-label="Delete parsed entry row"
+            aria-disabled={rows.length >= 10}
+          >
+            <Plus size={18} strokeWidth={2} />
+          </button>
         </div>
       )}
     </>
