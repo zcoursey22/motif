@@ -48,7 +48,7 @@ export default function RootLayout({
               target="_blank"
               rel="noopener noreferrer"
               href={'https://github.com/zcoursey22/motif'}
-              className="hover:underline underline-offset-3 decoration-2 text-neutral-700 dark:text-neutral-200 p-2 inline-flex gap-2 items-center"
+              className="hover:underline underline-offset-3 decoration-2 text-black dark:text-white p-2 inline-flex gap-2 items-center"
             >
               Source
               <LuGithub size={16} aria-hidden />
@@ -59,7 +59,7 @@ export default function RootLayout({
                 target="_blank"
                 rel="noopener noreferrer me"
                 href={'https://linkedin.com/in/zach-coursey'}
-                className="hover:underline underline-offset-3 decoration-2 text-neutral-700 dark:text-neutral-200 p-2 inline-flex gap-2 items-center"
+                className="hover:underline underline-offset-3 decoration-2 text-black dark:text-white p-2 inline-flex gap-2 items-center"
               >
                 Zach Coursey
                 <LuLinkedin size={16} aria-hidden />
