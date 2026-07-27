@@ -38,6 +38,9 @@ const getEmptyRow = (): EditableParsedEntryRow => ({
   durationMin: null,
 });
 
+const isRowValid = ({ instrument, focus }: EditableParsedEntryRow) =>
+  instrument !== null || focus.length > 0;
+
 const rowReducer = (
   state: EditableParsedEntryRow[],
   action: RowAction
@@ -60,6 +63,8 @@ const rowReducer = (
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
+  const [errorRowIds, setErrorRowIds] = useState<Set<string>>(new Set());
+  const [errorRowShaking, setErrorRowShaking] = useState(false);
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
   const [rows, dispatchRows] = useReducer(rowReducer, null, () => []);
@@ -70,6 +75,9 @@ export default function CaptureForm() {
   const rawTextHasValue = trimmedLength > 0 && trimmedLength <= 500;
 
   const isRawTextAreaLocked = isPending || isSuccess;
+
+  const showErrorForRow = (row: EditableParsedEntryRow) =>
+    errorRowIds.has(row.tempId) && !isRowValid(row);
 
   const handleParse = () => {
     if (!rawTextHasValue || isRawTextAreaLocked) return;
@@ -94,7 +102,16 @@ export default function CaptureForm() {
   };
 
   const handleSubmit = () => {
+    if (!rows.length) return;
+    const invalidRows = rows.filter(r => !isRowValid(r));
+    if (!rows.every(isRowValid)) {
+      setErrorRowIds(new Set(invalidRows.map(r => r.tempId)));
+      setErrorRowShaking(true);
+      return;
+    }
+    console.log(rows);
     setRawText('');
+    setErrorRowIds(new Set());
     dispatchRows({ type: RowActionType.SET, rows: [] });
     reset();
     rawTextElement.current?.focus();
@@ -197,7 +214,7 @@ export default function CaptureForm() {
             </div>
             <button
               className="inline-flex items-center gap-2 bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 aria-disabled:bg-mist-300 dark:aria-disabled:bg-mist-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
-              aria-disabled={!rows?.length}
+              aria-disabled={!rows.length}
               onClick={handleSubmit}
               aria-label="Log session"
             >
@@ -205,8 +222,8 @@ export default function CaptureForm() {
               <Activity size={18} strokeWidth={2} />
             </button>
           </div>
-          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] mb-2 border-b-2 border-neutral-300 dark:border-neutral-700">
-            <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 text-neutral-500 dark:text-neutral-400">
+          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2 pb-2">
+            <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700">
               <span>Instrument</span>
               <span>Focus</span>
               <span>Rating</span>
@@ -224,7 +241,10 @@ export default function CaptureForm() {
             {rows.map(row => (
               <div
                 key={row.tempId}
-                className="grid grid-cols-subgrid col-span-5 gap-2 items-stretch py-2 border-t-2 border-neutral-300 dark:border-neutral-700"
+                className={`grid grid-cols-subgrid col-span-5 gap-2 items-stretch ${
+                  errorRowShaking && showErrorForRow(row) ? 'animate-shake' : ''
+                }`}
+                onAnimationEnd={() => setErrorRowShaking(false)}
               >
                 <input
                   type="text"
@@ -236,13 +256,21 @@ export default function CaptureForm() {
                       patch: { instrument: e.target.value.trim() || null },
                     })
                   }
-                  className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
+                  className={`bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
+                    showErrorForRow(row)
+                      ? 'outline-red-500 dark:outline-red-400'
+                      : 'outline-transparent focus:outline-transparent'
+                  }`}
                 />
                 <input
                   type="text"
                   value={row.focus?.join(', ') ?? ''}
                   onChange={e => {}}
-                  className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
+                  className={`bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
+                    showErrorForRow(row)
+                      ? 'outline-2 outline-red-500 dark:outline-red-400'
+                      : 'outline-transparent focus:outline-transparent'
+                  }`}
                 />
                 <select
                   value={row.selfRating ?? ''}
@@ -290,7 +318,7 @@ export default function CaptureForm() {
                       tempId: row.tempId,
                     })
                   }
-                  aria-label="Delete parsed entry row"
+                  aria-label="Delete row"
                   aria-disabled={rows.length <= 1}
                 >
                   <X size={18} strokeWidth={2} />
@@ -298,19 +326,30 @@ export default function CaptureForm() {
               </div>
             ))}
           </div>
-          <button
-            className="min-h-[40px] min-w-[40px] justify-center self-stretch inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
-            onClick={() => {
-              if (rows.length < 10)
-                dispatchRows({
-                  type: RowActionType.ADD,
-                });
-            }}
-            aria-label="Delete parsed entry row"
-            aria-disabled={rows.length >= 10}
-          >
-            <Plus size={18} strokeWidth={2} />
-          </button>
+          <div className="flex">
+            {rows.some(showErrorForRow) && (
+              <div className="text-red-500 dark:text-red-400 inline-flex gap-2 py-2 grow">
+                <CircleAlert />
+                <span className="text-neutral-500 dark:text-neutral-400">
+                  Each entry needs an <strong>instrument</strong> or{' '}
+                  <strong>focus</strong>.
+                </span>
+              </div>
+            )}
+            <button
+              className="min-h-[40px] min-w-[40px] justify-center self-center inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+              onClick={() => {
+                if (rows.length < 10)
+                  dispatchRows({
+                    type: RowActionType.ADD,
+                  });
+              }}
+              aria-label="Add row"
+              aria-disabled={rows.length >= 10}
+            >
+              <Plus size={18} strokeWidth={2} />
+            </button>
+          </div>
         </div>
       )}
     </>
