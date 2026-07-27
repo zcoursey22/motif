@@ -10,6 +10,7 @@ const ButtonColor = {
   SUCCESS: 'success',
   WARNING: 'warn',
   DELETE: 'error',
+  BRAND: 'brand',
 } as const;
 type ButtonColor = (typeof ButtonColor)[keyof typeof ButtonColor];
 
@@ -28,6 +29,9 @@ const SOLID_CLASSNAMES: Record<ButtonColor, string> = {
     aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400`,
   error: `bg-red-400 hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400
     aria-disabled:bg-mauve-300 dark:aria-disabled:bg-mauve-500
+    aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400`,
+  brand: `bg-indigo-400 hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400
+    aria-disabled:bg-slate-300 dark:aria-disabled:bg-slate-500
     aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400`,
 };
 
@@ -52,6 +56,10 @@ const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
     hover:bg-red-500 dark:hover:bg-red-400
     aria-disabled:hover:text-mauve-300 aria-disabled:text-mauve-300
     aria-disabled:dark:text-mauve-500 dark:aria-disabled:hover:text-mauve-500`,
+  brand: `text-indigo-500 dark:text-indigo-400
+    hover:bg-indigo-500 dark:hover:bg-indigo-400
+    aria-disabled:hover:text-slate-300 aria-disabled:text-slate-300
+    aria-disabled:dark:text-slate-500 dark:aria-disabled:hover:text-slate-500`,
 };
 
 type ButtonProps = {

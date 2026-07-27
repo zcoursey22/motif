@@ -2,12 +2,16 @@
 
 import {
   Activity,
+  ArrowLeft,
   CircleAlert,
+  CornerLeftUp,
   Disc3,
   InfoIcon,
   Plus,
+  ScanText,
   SkipBack,
   SkipForward,
+  Undo2,
   X,
 } from 'lucide-react';
 import { useReducer, useRef, useState } from 'react';
@@ -15,6 +19,7 @@ import { useParse } from '../hooks/useParse';
 import { getParseErrorCodeMessage, ParsedEntry } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
 import { Button, IconButton } from './ui/Button';
+import { FocusInput } from './FocusInput';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
 
@@ -150,10 +155,7 @@ export default function CaptureForm() {
           ref={rawTextElement}
           autoComplete="off"
         />
-        <div
-          className={`flex justify-between items-end pr-1 pointer-events-none
-          ${isRawTextAreaLocked ? '' : 'min-h-9'}`}
-        >
+        <div className="flex justify-between items-end pr-1 pointer-events-none">
           <span
             className={`pl-2 text-sm ${
               isRawTextAreaLocked ? 'hidden' : ''
@@ -163,24 +165,24 @@ export default function CaptureForm() {
           </span>
           {!isRawTextAreaLocked && (
             <Button
-              color="primary"
+              color="brand"
               aria-disabled={!rawTextHasValue || isRawTextAreaLocked}
               onClick={handleParse}
               aria-label="Parse your practice session summary"
             >
+              <ScanText size={18} strokeWidth={2} />
               Parse
-              <SkipForward size={18} strokeWidth={2} />
             </Button>
           )}
         </div>
       </div>
       {isPending && (
-        <div className="inline-flex justify-center gap-2 text-neutral-500 dark:text-neutral-400">
+        <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300">
           <Disc3
             size={64}
             strokeWidth={1}
             className="animate-spin"
-            aria-label="Loading"
+            aria-hidden
           />
         </div>
       )}
@@ -196,7 +198,7 @@ export default function CaptureForm() {
         <div className="flex flex-col w-2xl max-w-[100%] mb-4">
           <div className="flex items-center justify-end gap-4 pb-2">
             <Button variant="ghost" color="secondary" onClick={handleBack}>
-              <SkipBack size={18} strokeWidth={2} />
+              <CornerLeftUp size={18} strokeWidth={2} />
               Back
             </Button>
             <div className="flex gap-2 items-center justify-end grow">
@@ -253,21 +255,22 @@ export default function CaptureForm() {
                       patch: { instrument: e.target.value.trim() || null },
                     })
                   }
-                  className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
+                  className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2 ${
                     showErrorForRow(row)
                       ? 'outline-red-500 dark:outline-red-400'
                       : 'outline-transparent focus:outline-transparent'
                   }`}
                 />
-                <input
-                  type="text"
-                  value={row.focus?.join(', ') ?? ''}
-                  onChange={e => {}}
-                  className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2 ${
-                    showErrorForRow(row)
-                      ? 'outline-2 outline-red-500 dark:outline-red-400'
-                      : 'outline-transparent focus:outline-transparent'
-                  }`}
+                <FocusInput
+                  focus={row.focus}
+                  error={showErrorForRow(row)}
+                  onChange={next =>
+                    dispatchRows({
+                      type: RowActionType.UPDATE,
+                      tempId: row.tempId,
+                      patch: { focus: next },
+                    })
+                  }
                 />
                 <select
                   value={row.selfRating ?? ''}
@@ -283,7 +286,7 @@ export default function CaptureForm() {
                       },
                     })
                   }
-                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none"
+                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2"
                 >
                   <option value="" />
                   {Object.values(SelfRating).map(r => (
@@ -305,9 +308,10 @@ export default function CaptureForm() {
                       patch: { durationMin: Number.isFinite(n) ? n : null },
                     });
                   }}
-                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-xl px-4 py-2 focus:outline-none"
+                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none"
                 />
                 <IconButton
+                  className="self-center"
                   variant="ghost"
                   color="error"
                   onClick={() =>

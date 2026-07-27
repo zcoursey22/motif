@@ -61,3 +61,7 @@ body {
 .animate-shake {
   animation: shake 0.2s ease;
 }
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
