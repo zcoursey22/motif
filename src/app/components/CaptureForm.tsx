@@ -14,6 +14,7 @@ import { useReducer, useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
 import { getParseErrorCodeMessage, ParsedEntry } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
+import { Button, IconButton } from './ui/Button';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
 
@@ -156,21 +157,21 @@ export default function CaptureForm() {
           <span
             className={`pl-2 text-sm ${
               isRawTextAreaLocked ? 'hidden' : ''
-            } ${trimmedLength > 500 ? 'text-red-600 dark:text-red-600' : 'text-neutral-400 dark:text-neutral-400'}`}
+            } ${trimmedLength > 500 ? 'text-red-500 dark:text-red-400' : 'text-neutral-400 dark:text-neutral-400'}`}
           >
             {`${trimmedLength} / 500`}
           </span>
-          <button
-            className={`items-center gap-2 bg-blue-400 hover:bg-blue-500 dark:bg-blue-500 hover:bg-blue-400 dark:hover:bg-blue-400 aria-disabled:bg-slate-300 dark:aria-disabled:bg-slate-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-text pointer-events-auto ${
-              isRawTextAreaLocked ? 'hidden' : 'inline-flex'
-            }`}
-            aria-disabled={!rawTextHasValue || isRawTextAreaLocked}
-            onClick={handleParse}
-            aria-label="Parse your practice session summary"
-          >
-            Parse
-            <SkipForward size={18} strokeWidth={2} />
-          </button>
+          {!isRawTextAreaLocked && (
+            <Button
+              color="primary"
+              aria-disabled={!rawTextHasValue || isRawTextAreaLocked}
+              onClick={handleParse}
+              aria-label="Parse your practice session summary"
+            >
+              Parse
+              <SkipForward size={18} strokeWidth={2} />
+            </Button>
+          )}
         </div>
       </div>
       {isPending && (
@@ -184,7 +185,7 @@ export default function CaptureForm() {
         </div>
       )}
       {!isPending && isError && (
-        <div className="text-red-500 dark:text-red-400 inline-flex gap-2">
+        <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2">
           <CircleAlert />
           <span className="text-neutral-500 dark:text-neutral-400">
             {getParseErrorCodeMessage(error.message)}
@@ -194,14 +195,10 @@ export default function CaptureForm() {
       {!isPending && !isError && isSuccess && (
         <div className="flex flex-col w-2xl max-w-[100%] mb-4">
           <div className="flex items-center justify-end gap-4 pb-2">
-            <button
-              className="min-h-[40px] min-w-[40px] justify-center self-stretch inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
-              onClick={handleBack}
-              aria-label="Back"
-            >
+            <Button variant="ghost" color="secondary" onClick={handleBack}>
               <SkipBack size={18} strokeWidth={2} />
               Back
-            </button>
+            </Button>
             <div className="flex gap-2 items-center justify-end grow">
               <span className="text-neutral-500 dark:text-neutral-400">
                 Practiced on
@@ -209,29 +206,29 @@ export default function CaptureForm() {
               <input
                 type="date"
                 defaultValue={new Date().toISOString().slice(0, 10)}
-                className="bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
+                className="bg-white dark:bg-neutral-900 shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none"
               />
             </div>
-            <button
-              className="inline-flex items-center gap-2 bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 aria-disabled:bg-mist-300 dark:aria-disabled:bg-mist-500 text-white aria-disabled:text-neutral-100 dark:aria-disabled:text-neutral-400 px-4 py-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+            <Button
+              color="success"
               aria-disabled={!rows.length}
               onClick={handleSubmit}
               aria-label="Log session"
             >
-              Log
               <Activity size={18} strokeWidth={2} />
-            </button>
+              Log
+            </Button>
           </div>
-          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2 pb-2">
+          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2 pb-2 mb-2 border-b-2 border-neutral-300 dark:border-neutral-700">
             <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700">
               <span>Instrument</span>
               <span>Focus</span>
               <span>Rating</span>
               <span>Duration</span>
-              <span />
+              <span className="min-w-[40px]" />
             </div>
             {rows.length === 0 && (
-              <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-4 self-center justify-center inline-flex gap-2 border-t-2 border-neutral-300 dark:border-neutral-700">
+              <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-2 self-center justify-center items-center inline-flex gap-2">
                 <InfoIcon />
                 <span className="text-neutral-500 dark:text-neutral-400">
                   Nothing was parsed. Edit your summary to be more specific.
@@ -256,7 +253,7 @@ export default function CaptureForm() {
                       patch: { instrument: e.target.value.trim() || null },
                     })
                   }
-                  className={`bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
+                  className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
                     showErrorForRow(row)
                       ? 'outline-red-500 dark:outline-red-400'
                       : 'outline-transparent focus:outline-transparent'
@@ -266,7 +263,7 @@ export default function CaptureForm() {
                   type="text"
                   value={row.focus?.join(', ') ?? ''}
                   onChange={e => {}}
-                  className={`bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 outline-2 ${
+                  className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2 ${
                     showErrorForRow(row)
                       ? 'outline-2 outline-red-500 dark:outline-red-400'
                       : 'outline-transparent focus:outline-transparent'
@@ -286,7 +283,7 @@ export default function CaptureForm() {
                       },
                     })
                   }
-                  className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
+                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none"
                 >
                   <option value="" />
                   {Object.values(SelfRating).map(r => (
@@ -308,10 +305,11 @@ export default function CaptureForm() {
                       patch: { durationMin: Number.isFinite(n) ? n : null },
                     });
                   }}
-                  className="bg-white dark:bg-neutral-900 shadow-sm focus:shadow-lg rounded-2xl px-4 py-2 focus:outline-none"
+                  className="bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-xl px-4 py-2 focus:outline-none"
                 />
-                <button
-                  className="min-h-[40px] min-w-[40px] self-center inline-flex justify-center items-center gap-2 hover:text-white text-red-500 hover:bg-red-500 dark:text-red-400 dark:hover:bg-red-400 aria-disabled:hover:text-mauve-300 aria-disabled:text-mauve-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-mauve-500 dark:aria-disabled:hover:text-mauve-500 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+                <IconButton
+                  variant="ghost"
+                  color="error"
                   onClick={() =>
                     dispatchRows({
                       type: RowActionType.DELETE,
@@ -322,13 +320,13 @@ export default function CaptureForm() {
                   aria-disabled={rows.length <= 1}
                 >
                   <X size={18} strokeWidth={2} />
-                </button>
+                </IconButton>
               </div>
             ))}
           </div>
-          <div className="flex">
+          <div className="flex items-center justify-end">
             {rows.some(showErrorForRow) && (
-              <div className="text-red-500 dark:text-red-400 inline-flex gap-2 py-2 grow">
+              <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow">
                 <CircleAlert />
                 <span className="text-neutral-500 dark:text-neutral-400">
                   Each entry needs an <strong>instrument</strong> or{' '}
@@ -336,19 +334,20 @@ export default function CaptureForm() {
                 </span>
               </div>
             )}
-            <button
-              className="min-h-[40px] min-w-[40px] justify-center self-center inline-flex items-center gap-2 hover:text-white hover:bg-neutral-400 dark:hover:bg-neutral-500 aria-disabled:hover:text-neutral-300 aria-disabled:text-neutral-300 aria-disabled:hover:bg-transparent aria-disabled:dark:text-neutral-600 dark:aria-disabled:hover:text-neutral-600 aria-disabled:dark:hover:bg-transparent p-2 rounded-xl cursor-pointer aria-disabled:cursor-default pointer-events-auto"
+            <Button
+              variant="ghost"
+              color="secondary"
               onClick={() => {
                 if (rows.length < 10)
                   dispatchRows({
                     type: RowActionType.ADD,
                   });
               }}
-              aria-label="Add row"
               aria-disabled={rows.length >= 10}
             >
               <Plus size={18} strokeWidth={2} />
-            </button>
+              Add entry
+            </Button>
           </div>
         </div>
       )}
