@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ALTER COLUMN "occurred_at" SET DATA TYPE date;

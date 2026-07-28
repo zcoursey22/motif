@@ -14,7 +14,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Worked on ii-V-I voicings for 40 min on keys, then ran Giant Steps changes, felt shaky on the bridge',
-    occurredAt: new Date('2026-06-22'),
+    occurredOn: '2026-06-22',
     createdAt: new Date('2026-06-22'),
     entries: [
       {
@@ -34,7 +34,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Practiced comping Autumn Leaves with a Charleston rhythm and felt good. Practiced the head to with some variations to prep for learning to solo over it.',
-    occurredAt: new Date('2026-06-25'),
+    occurredOn: '2026-06-25',
     createdAt: new Date('2026-06-25'),
     entries: [
       {
@@ -54,7 +54,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       "Segovia studies, ran through clean in 5 minutes. Did it again but it wasn't quite as clean and took more like 6.",
-    occurredAt: new Date('2026-06-28'),
+    occurredOn: '2026-06-28',
     createdAt: new Date('2026-06-29'),
     entries: [
       {
@@ -68,7 +68,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Brass drills today. Ran scales on trombone but my intonation was a little off. Ended with ten minutes of long tones and trills on trumpet',
-    occurredAt: new Date('2026-07-10'),
+    occurredOn: '2026-07-10',
     createdAt: new Date('2026-07-10'),
     entries: [
       {
@@ -88,7 +88,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       "Trombone again, still not landing the intonation on the upper register but a little steadier than last time. Also picked up violin for the first time in a while, 15 mins, didn't feel good about it at all.",
-    occurredAt: new Date('2026-07-13'),
+    occurredOn: '2026-07-13',
     createdAt: new Date('2026-07-13'),
     entries: [
       {
@@ -108,7 +108,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       "Back on piano after way too long, voicings felt rusty at first but came back. Also comped over Autumn Leaves again, that's feeling really solid now.",
-    occurredAt: new Date('2026-07-15'),
+    occurredOn: '2026-07-15',
     createdAt: new Date('2026-07-15'),
     entries: [
       {
@@ -128,7 +128,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Violin again, second time this week. Still rough but noticeably less bad than last time.',
-    occurredAt: new Date('2026-07-16'),
+    occurredOn: '2026-07-16',
     createdAt: new Date('2026-07-16'),
     entries: [
       {
@@ -142,7 +142,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Trumpet long tones, feeling more consistent with breath support. Ten minutes of trills after.',
-    occurredAt: new Date('2026-07-17'),
+    occurredOn: '2026-07-17',
     createdAt: new Date('2026-07-17'),
     entries: [
       {
@@ -162,7 +162,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       'Theory session, went through minor ii-V-i and some modal interchange stuff for about 25 min. Felt like it clicked.',
-    occurredAt: new Date('2026-07-18'),
+    occurredOn: '2026-07-18',
     createdAt: new Date('2026-07-18'),
     entries: [
       {
@@ -176,7 +176,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       "Trombone finally clicked, intonation felt genuinely good today, not just 'less bad.'",
-    occurredAt: new Date('2026-07-19'),
+    occurredOn: '2026-07-19',
     createdAt: new Date('2026-07-19'),
     entries: [
       {
@@ -190,7 +190,7 @@ const seedData: SeedSession[] = [
   {
     rawText:
       "I studied some theory stuff like 2 5 1s and different ways to resolve them looking at jazz standards, probably half an hour. Then I played violin for 15 mins and didn't feel good about it at all.",
-    occurredAt: new Date('2026-07-20'),
+    occurredOn: '2026-07-20',
     createdAt: new Date('2026-07-20'),
     entries: [
       {

@@ -2,16 +2,12 @@
 
 import {
   Activity,
-  ArrowLeft,
   CircleAlert,
   CornerLeftUp,
   Disc3,
   InfoIcon,
   Plus,
   ScanText,
-  SkipBack,
-  SkipForward,
-  Undo2,
   X,
 } from 'lucide-react';
 import { useReducer, useRef, useState } from 'react';
@@ -20,6 +16,7 @@ import { getParseErrorCodeMessage, ParsedEntry } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
 import { Button, IconButton } from './ui/Button';
 import { FocusInput } from './FocusInput';
+import { toLocalDateString } from '@/lib/utils/date';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
 
@@ -69,6 +66,9 @@ const rowReducer = (
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
+  const [occurredOnDate, setOccurredOnDate] = useState(
+    toLocalDateString(new Date())
+  );
   const [errorRowIds, setErrorRowIds] = useState<Set<string>>(new Set());
   const [errorRowShaking, setErrorRowShaking] = useState(false);
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
@@ -115,7 +115,12 @@ export default function CaptureForm() {
       setErrorRowShaking(true);
       return;
     }
-    console.log(rows);
+    console.log({
+      rawText,
+      occurredOn: occurredOnDate,
+      createdAt: new Date(),
+      entries: rows,
+    });
     setRawText('');
     setErrorRowIds(new Set());
     dispatchRows({ type: RowActionType.SET, rows: [] });
@@ -207,7 +212,8 @@ export default function CaptureForm() {
               </span>
               <input
                 type="date"
-                defaultValue={new Date().toISOString().slice(0, 10)}
+                value={occurredOnDate}
+                onChange={e => setOccurredOnDate(e.target.value)}
                 className="bg-white dark:bg-neutral-900 shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none"
               />
             </div>

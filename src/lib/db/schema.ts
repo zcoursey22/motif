@@ -6,6 +6,7 @@ import {
   integer,
   timestamp,
   index,
+  date,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { SelfRating } from '../constants';
@@ -20,12 +21,12 @@ export const sessions = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     rawText: text('raw_text').notNull(),
-    occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+    occurredOn: date('occurred_on').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
-  table => [index('sessions_occurred_at_idx').on(table.occurredAt)]
+  table => [index('sessions_occurred_on_idx').on(table.occurredOn)]
 );
 
 export const entries = pgTable(

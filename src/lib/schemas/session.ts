@@ -21,7 +21,7 @@ export const EntrySchema = EntryFields.refine(
 export const SessionSchema = z.object({
   id: z.string(),
   rawText: z.string().min(1),
-  occurredAt: z.coerce.date(),
+  occurredOn: z.string(),
   createdAt: z.coerce.date(),
 });
 
