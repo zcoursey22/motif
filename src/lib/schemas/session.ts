@@ -25,5 +25,18 @@ export const SessionSchema = z.object({
   createdAt: z.coerce.date(),
 });
 
+export const ParsedEntrySchema = EntryFields.omit({
+  id: true,
+  sessionId: true,
+});
+
+export const CreateSessionSchema = z.object({
+  rawText: z.string().trim().min(1).max(500),
+  occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  entries: z.array(ParsedEntrySchema).min(1),
+});
+export type CreateSession = z.infer<typeof CreateSessionSchema>;
+
 export type Entry = z.infer<typeof EntrySchema>;
+export type ParsedEntry = z.infer<typeof ParsedEntrySchema>;
 export type Session = z.infer<typeof SessionSchema>;

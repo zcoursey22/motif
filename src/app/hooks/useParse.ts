@@ -1,4 +1,5 @@
-import { ParsedEntry, ParseError, ParseErrorCode } from '@/lib/schemas/parse';
+import { ParsedEntry } from '@/lib/schemas/session';
+import { AppError } from '@/lib/utils/api';
 import { useMutation } from '@tanstack/react-query';
 
 async function requestParse(rawText: string): Promise<ParsedEntry[]> {
@@ -8,9 +9,7 @@ async function requestParse(rawText: string): Promise<ParsedEntry[]> {
     body: JSON.stringify({ rawText }),
   });
   if (!res.ok)
-    throw new ParseError(
-      (await res.json())?.error?.code ?? ParseErrorCode.INTERNAL_ERROR
-    );
+    throw new AppError((await res.json())?.error?.code ?? 'internal_error');
   return (await res.json()).entries;
 }
 

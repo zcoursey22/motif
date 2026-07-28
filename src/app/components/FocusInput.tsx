@@ -4,15 +4,22 @@ type FocusInputProps = {
   focus: string[];
   onChange: (next: string[]) => void;
   error?: boolean;
+  disabled?: boolean;
 };
 
 const MAX_TAGS = 6;
 
-export function FocusInput({ focus, onChange, error }: FocusInputProps) {
+export function FocusInput({
+  focus,
+  onChange,
+  error,
+  disabled,
+}: FocusInputProps) {
   const [draft, setDraft] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const createTag = () => {
+    if (disabled) return;
     const tag = draft.trim();
     if (tag && !focus.includes(tag) && focus.length < MAX_TAGS) {
       onChange([...focus, tag]);
@@ -24,6 +31,7 @@ export function FocusInput({ focus, onChange, error }: FocusInputProps) {
   };
 
   const removeTag = (tag: string) => {
+    if (disabled) return;
     onChange(focus.filter(f => f !== tag));
     inputRef.current?.focus();
   };
@@ -49,10 +57,15 @@ export function FocusInput({ focus, onChange, error }: FocusInputProps) {
 
   return (
     <div
-      className={`scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-neutral-900 shadow-sm rounded-2xl px-3 py-1.5 outline-2 cursor-text focus-within:shadow-lg ${
+      className={`input-wrapper scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-neutral-900 shadow-sm rounded-2xl px-3 py-1.5 outline-2 focus-within:shadow-lg ${
         error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'
+      } ${
+        disabled
+          ? 'cursor-default read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400'
+          : 'cursor-text'
       }`}
       onClick={e => {
+        if (disabled) return;
         (e.currentTarget.querySelector('input') as HTMLInputElement)?.focus();
       }}
     >
@@ -60,13 +73,19 @@ export function FocusInput({ focus, onChange, error }: FocusInputProps) {
         <button
           key={tag}
           type="button"
-          className="shrink-0 inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-200 text-sm px-2 py-0.5 cursor-default rounded-full"
+          className={`shrink-0 inline-flex items-center gap-1 text-sm px-2 py-0.5 cursor-default rounded-full
+            ${
+              disabled
+                ? 'bg-neutral-100 dark:bg-neutral-500 text-neutral-400 dark:text-neutral-300'
+                : 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-200'
+            }`}
           onKeyDown={e => handleTagKeyDown(e, tag)}
           onClick={e => {
             e.stopPropagation();
             removeTag(tag);
           }}
           aria-label={`Remove "${tag}" tag`}
+          disabled={disabled}
         >
           {tag}
         </button>
@@ -77,7 +96,11 @@ export function FocusInput({ focus, onChange, error }: FocusInputProps) {
         value={draft}
         onChange={e => setDraft(e.target.value)}
         onKeyDown={handleInputKeyDown}
-        className="shrink-0 flex-1 min-w-[60px] bg-transparent py-0.5 focus:outline-none placeholder-neutral-400"
+        className={`shrink-0 flex-1 min-w-[60px] bg-transparent py-0.5 focus:outline-none placeholder-neutral-400 ${
+          disabled ? 'cursor-default' : ''
+        }`}
+        readOnly={disabled}
+        aria-disabled={disabled}
       />
     </div>
   );

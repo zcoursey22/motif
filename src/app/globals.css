@@ -30,6 +30,17 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+button,
+a,
+input,
+textarea,
+select,
+.input-wrapper {
+  transition-property:
+    color, background-color, border-color, box-shadow, outline, border,
+    background;
   transition-duration: 100ms;
 }
 

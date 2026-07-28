@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
-import {
-  ParseErrorCode,
-  ParseRequestSchema,
-  type ParsedEntry,
-} from '@/lib/schemas/parse';
+import { ParseRequestSchema } from '@/lib/schemas/parse';
 import { SelfRating } from '@/lib/constants';
+import { fail } from '@/lib/utils/api';
+import { ParsedEntry } from '@/lib/schemas/session';
 
 export const parse = async (rawText: string): Promise<ParsedEntry[]> => {
   await new Promise(r => setTimeout(r, 1500));
@@ -36,37 +34,27 @@ export const parse = async (rawText: string): Promise<ParsedEntry[]> => {
   ];
 };
 
-const ERROR_STATUS: Record<ParseErrorCode, number> = {
-  [ParseErrorCode.VALIDATION_FAILED]: 400,
-  [ParseErrorCode.TIMEOUT]: 504,
-  [ParseErrorCode.RATE_LIMIT]: 429,
-  [ParseErrorCode.INTERNAL_ERROR]: 502,
-};
-
-const fail = (code: ParseErrorCode) =>
-  NextResponse.json({ error: { code } }, { status: ERROR_STATUS[code] });
-
 export async function POST(req: Request) {
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return fail(ParseErrorCode.VALIDATION_FAILED);
+    return fail('bad_request');
   }
 
   const input = ParseRequestSchema.safeParse(body);
-  if (!input.success) return fail(ParseErrorCode.VALIDATION_FAILED);
+  if (!input.success) return fail('bad_request');
 
   try {
     const entries = await parse(input.data.rawText);
     const responses = [
       NextResponse.json({ entries }),
       NextResponse.json({ entries: [] }),
-      fail(ParseErrorCode.INTERNAL_ERROR),
+      fail('internal_error'),
     ];
     return responses[Math.floor(Math.random() * responses.length)];
   } catch (e) {
-    console.error(e);
-    return fail(ParseErrorCode.INTERNAL_ERROR);
+    console.error('[parse]', e);
+    return fail('internal_error');
   }
 }
