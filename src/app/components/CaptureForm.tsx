@@ -19,6 +19,7 @@ import { FocusInput } from './FocusInput';
 import { toLocalDateString } from '@/lib/utils/date';
 import { getErrorMessage } from '@/lib/utils/api';
 import { useCreateSession } from '../hooks/useCreateSession';
+import { useRouter } from 'next/navigation';
 
 type EditableParsedEntryRow = ParsedEntry & { tempId: string };
 
@@ -72,10 +73,13 @@ export default function CaptureForm() {
   const [errorRowIds, setErrorRowIds] = useState<Set<string>>(new Set());
   const [errorRowShaking, setErrorRowShaking] = useState(false);
   const [hasCreateErrored, setHasCreateErrored] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
   const [rows, dispatchRows] = useReducer(rowReducer, null, () => []);
+
+  const router = useRouter();
 
   const {
     mutate: parse,
@@ -88,7 +92,6 @@ export default function CaptureForm() {
 
   const {
     mutate: create,
-    isPending: isCreating,
     isError: createFailed,
     error: createError,
     reset: resetCreate,
@@ -127,7 +130,7 @@ export default function CaptureForm() {
   };
 
   const handleCreate = () => {
-    if (!rows.length || isCreating) return;
+    if (!rows.length || isSubmitting) return;
 
     if (!rows.every(isRowValid)) {
       setErrorRowIds(
@@ -137,6 +140,7 @@ export default function CaptureForm() {
       return;
     }
 
+    setIsSubmitting(true);
     create(
       {
         rawText,
@@ -145,15 +149,17 @@ export default function CaptureForm() {
       },
       {
         onSuccess: () => {
-          setRawText('');
-          setErrorRowIds(new Set());
-          dispatchRows({ type: RowActionType.SET, rows: [] });
-          setHasCreateErrored(false);
-          resetParse();
-          resetCreate();
-          rawTextElement.current?.focus();
+          // setRawText('');
+          // setErrorRowIds(new Set());
+          // dispatchRows({ type: RowActionType.SET, rows: [] });
+          // setHasCreateErrored(false);
+          // resetParse();
+          // resetCreate();
+          // rawTextElement.current?.focus();
+          router.push('/sessions');
         },
         onError: () => {
+          setIsSubmitting(false);
           setHasCreateErrored(true);
         },
       }
@@ -238,7 +244,7 @@ export default function CaptureForm() {
           {hasCreateErrored && (
             <div
               className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2
-                ${createFailed && !isCreating ? 'visible' : 'invisible'}`}
+                ${createFailed && !isSubmitting ? 'visible' : 'invisible'}`}
             >
               <CircleAlert />
               <span className="text-neutral-500 dark:text-neutral-400">
@@ -248,7 +254,7 @@ export default function CaptureForm() {
           )}
           <div className="flex flex-col w-2xl max-w-[100%] mb-4">
             <div className="flex items-center justify-end gap-4 pb-2">
-              {!isCreating && (
+              {!isSubmitting && (
                 <Button variant="ghost" color="secondary" onClick={handleBack}>
                   <CornerLeftUp size={18} strokeWidth={2} />
                   Back
@@ -262,12 +268,12 @@ export default function CaptureForm() {
                   type="date"
                   value={occurredOn}
                   onChange={e => setOccurredOn(e.target.value)}
-                  aria-disabled={isCreating}
-                  readOnly={isCreating}
+                  aria-disabled={isSubmitting}
+                  readOnly={isSubmitting}
                   className="bg-white dark:bg-neutral-900 shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400"
                 />
               </div>
-              {isCreating ? (
+              {isSubmitting ? (
                 <div className=" inline-flex items-center justify-center gap-2 text-indigo-400 dark:text-indigo-300 w-22">
                   <Disc3
                     size={40}
@@ -279,7 +285,7 @@ export default function CaptureForm() {
               ) : (
                 <Button
                   color="success"
-                  aria-disabled={!rows.length || isCreating}
+                  aria-disabled={!rows.length || isSubmitting}
                   onClick={handleCreate}
                   aria-label="Create session"
                   className="w-22"
@@ -332,8 +338,8 @@ export default function CaptureForm() {
                           ? 'outline-red-500 dark:outline-red-400'
                           : 'outline-transparent focus:outline-transparent'
                       }`}
-                    aria-disabled={isCreating}
-                    readOnly={isCreating}
+                    aria-disabled={isSubmitting}
+                    readOnly={isSubmitting}
                   />
                   <FocusInput
                     focus={row.focus}
@@ -345,12 +351,12 @@ export default function CaptureForm() {
                         patch: { focus: next },
                       });
                     }}
-                    disabled={isCreating}
+                    disabled={isSubmitting}
                   />
                   <select
                     value={row.selfRating ?? ''}
                     onChange={e => {
-                      if (!isCreating)
+                      if (!isSubmitting)
                         dispatchRows({
                           type: RowActionType.UPDATE,
                           tempId: row.tempId,
@@ -362,7 +368,7 @@ export default function CaptureForm() {
                           },
                         });
                     }}
-                    disabled={isCreating}
+                    disabled={isSubmitting}
                     className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2
                       disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
                   >
@@ -386,24 +392,24 @@ export default function CaptureForm() {
                         patch: { durationMin: Number.isFinite(n) ? n : null },
                       });
                     }}
-                    disabled={isCreating}
+                    disabled={isSubmitting}
                     className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
                   />
-                  {!isCreating && (
+                  {!isSubmitting && (
                     <IconButton
                       className="self-center"
                       variant="ghost"
                       color="error"
                       onClick={() => {
-                        if (isCreating) return;
+                        if (isSubmitting) return;
                         dispatchRows({
                           type: RowActionType.DELETE,
                           tempId: row.tempId,
                         });
                       }}
                       aria-label="Delete row"
-                      aria-disabled={rows.length <= 1 || isCreating}
+                      aria-disabled={rows.length <= 1 || isSubmitting}
                     >
                       <X size={18} strokeWidth={2} />
                     </IconButton>
@@ -412,7 +418,7 @@ export default function CaptureForm() {
               ))}
             </div>
             <div
-              className={`flex items-center justify-end ${!isCreating ? 'visible' : 'invisible'}`}
+              className={`flex items-center justify-end ${!isSubmitting ? 'visible' : 'invisible'}`}
             >
               {rows.some(showErrorForRow) && (
                 <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow">
@@ -427,7 +433,7 @@ export default function CaptureForm() {
                 variant="ghost"
                 color="secondary"
                 onClick={() => {
-                  if (rows.length < 10 && !isCreating)
+                  if (rows.length < 10 && !isSubmitting)
                     dispatchRows({
                       type: RowActionType.ADD,
                     });
