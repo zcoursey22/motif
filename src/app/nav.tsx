@@ -1,4 +1,4 @@
-import { Link } from './components/ui/Link';
+import { Link } from '../components/ui/Link';
 
 const links = [{ href: '/sessions', label: 'Sessions' }];
 

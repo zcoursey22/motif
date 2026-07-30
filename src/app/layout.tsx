@@ -6,7 +6,7 @@ import { LuGithub, LuLinkedin } from 'react-icons/lu';
 import NextLink from 'next/link';
 import { Providers } from './providers';
 import { Nav } from './nav';
-import { ExternalLink } from './components/ui/ExternalLink';
+import { ExternalLink } from '../components/ui/ExternalLink';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

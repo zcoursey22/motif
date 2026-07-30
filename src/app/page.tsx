@@ -1,4 +1,4 @@
-import CaptureView from './components/CaptureForm';
+import CaptureView from '../components/CaptureForm';
 
 export default function Home() {
   return (
