@@ -101,6 +101,7 @@ export function FocusInput({
         }`}
         readOnly={disabled}
         aria-disabled={disabled}
+        aria-label="Focus"
       />
     </div>
   );

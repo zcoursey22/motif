@@ -1,3 +1,5 @@
+import { LucideIcon } from 'lucide-react';
+
 const ButtonVariant = {
   SOLID: 'solid',
   GHOST: 'ghost',
@@ -38,14 +40,19 @@ const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
     hover:bg-indigo-500 dark:hover:bg-indigo-400`,
 };
 
+const ICON_SIZE = 18;
+const ICON_STROKE = 2;
+
 type ButtonProps = {
   variant?: ButtonVariant;
   color?: ButtonColor;
+  icon?: LucideIcon;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function BaseButton({
   variant = 'solid',
   color = 'secondary',
+  icon: Icon,
   className,
   children,
   ...rest
@@ -63,6 +70,7 @@ function BaseButton({
         ${className ?? ''}`}
       {...rest}
     >
+      {Icon && <Icon size={ICON_SIZE} strokeWidth={ICON_STROKE} aria-hidden />}
       {children}
     </button>
   );

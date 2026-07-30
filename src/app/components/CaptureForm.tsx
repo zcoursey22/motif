@@ -181,7 +181,7 @@ export default function CaptureForm() {
     <>
       <div
         onClick={handleTextAreaContainerClick}
-        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-2xl max-w-[100%] p-4 pt-6 pr-3 mb-1 rounded-3xl ${
+        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full p-4 pt-6 pr-3 mb-1 rounded-3xl ${
           isRawTextAreaLocked
             ? 'cursor-default bg-neutral-200 dark:bg-neutral-700'
             : 'cursor-text bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg'
@@ -214,8 +214,8 @@ export default function CaptureForm() {
               aria-disabled={!rawTextHasValue || isRawTextAreaLocked}
               onClick={handleParse}
               aria-label="Parse your practice session summary"
+              icon={ScanText}
             >
-              <ScanText size={18} strokeWidth={2} />
               Parse
             </Button>
           )}
@@ -252,11 +252,15 @@ export default function CaptureForm() {
               </span>
             </div>
           )}
-          <div className="flex flex-col w-2xl max-w-[100%] mb-4">
+          <div className="flex flex-col w-full mb-4">
             <div className="flex items-center justify-end gap-4 pb-2">
               {!isSubmitting && (
-                <Button variant="ghost" color="secondary" onClick={handleBack}>
-                  <CornerLeftUp size={18} strokeWidth={2} />
+                <Button
+                  variant="ghost"
+                  color="secondary"
+                  onClick={handleBack}
+                  icon={CornerLeftUp}
+                >
                   Back
                 </Button>
               )}
@@ -289,8 +293,8 @@ export default function CaptureForm() {
                   onClick={handleCreate}
                   aria-label="Create session"
                   className="w-22"
+                  icon={Activity}
                 >
-                  <Activity size={18} strokeWidth={2} />
                   Log
                 </Button>
               )}
@@ -340,6 +344,7 @@ export default function CaptureForm() {
                       }`}
                     aria-disabled={isSubmitting}
                     readOnly={isSubmitting}
+                    aria-label="Instrument"
                   />
                   <FocusInput
                     focus={row.focus}
@@ -371,6 +376,7 @@ export default function CaptureForm() {
                     disabled={isSubmitting}
                     className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2
                       disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
+                    aria-label="Rating"
                   >
                     <option value="" />
                     {Object.values(SelfRating).map(r => (
@@ -395,6 +401,7 @@ export default function CaptureForm() {
                     disabled={isSubmitting}
                     className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
+                    aria-label="Duration"
                   />
                   {!isSubmitting && (
                     <IconButton
@@ -439,8 +446,8 @@ export default function CaptureForm() {
                     });
                 }}
                 aria-disabled={rows.length >= 10}
+                icon={Plus}
               >
-                <Plus size={18} strokeWidth={2} />
                 Add entry
               </Button>
             </div>
