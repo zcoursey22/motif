@@ -5,23 +5,17 @@ import {
   CircleAlert,
   CornerLeftUp,
   Disc3,
-  InfoIcon,
-  Plus,
   ScanText,
-  X,
 } from 'lucide-react';
 import { useReducer, useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
-import { ParsedEntry } from '@/lib/schemas/session';
-import { SelfRating } from '@/lib/constants';
-import { Button, IconButton } from './ui/Button';
-import { FocusInput } from './FocusInput';
+import { EditableEntry, isEntryValid } from '@/lib/schemas/session';
+import { Button } from './ui/Button';
 import { toLocalDateString } from '@/lib/utils/date';
 import { getErrorMessage } from '@/lib/utils/api';
 import { useCreateSession } from '../hooks/useCreateSession';
 import { useRouter } from 'next/navigation';
-
-type EditableParsedEntryRow = ParsedEntry & { tempId: string };
+import { EntryTable } from './EntryTable';
 
 enum RowActionType {
   SET,
@@ -31,37 +25,36 @@ enum RowActionType {
 }
 
 type RowAction =
-  | { type: RowActionType.SET; rows: EditableParsedEntryRow[] }
-  | { type: RowActionType.UPDATE; tempId: string; patch: Partial<ParsedEntry> }
-  | { type: RowActionType.DELETE; tempId: string }
+  | { type: RowActionType.SET; rows: EditableEntry[] }
+  | {
+      type: RowActionType.UPDATE;
+      id: string;
+      patch: Partial<EditableEntry>;
+    }
+  | { type: RowActionType.DELETE; id: string }
   | { type: RowActionType.ADD };
 
-const getEmptyRow = (): EditableParsedEntryRow => ({
-  tempId: crypto.randomUUID(),
+const getEmptyRow = (): EditableEntry => ({
+  id: crypto.randomUUID(),
   instrument: null,
   focus: [],
   selfRating: null,
   durationMin: null,
 });
 
-const isRowValid = ({ instrument, focus }: EditableParsedEntryRow) =>
-  instrument !== null || focus.length > 0;
-
 const rowReducer = (
-  state: EditableParsedEntryRow[],
+  state: EditableEntry[],
   action: RowAction
-): EditableParsedEntryRow[] => {
+): EditableEntry[] => {
   switch (action.type) {
     case RowActionType.SET:
       return action.rows.length ? action.rows : [];
     case RowActionType.UPDATE:
       return state.map(r =>
-        r.tempId === action.tempId ? { ...r, ...action.patch } : r
+        r.id === action.id ? { ...r, ...action.patch } : r
       );
     case RowActionType.DELETE:
-      return state.length <= 1
-        ? state
-        : state.filter(r => r.tempId !== action.tempId);
+      return state.length <= 1 ? state : state.filter(r => r.id !== action.id);
     case RowActionType.ADD:
       return [...state, getEmptyRow()];
   }
@@ -70,10 +63,9 @@ const rowReducer = (
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
   const [occurredOn, setOccurredOn] = useState(toLocalDateString(new Date()));
-  const [errorRowIds, setErrorRowIds] = useState<Set<string>>(new Set());
-  const [errorRowShaking, setErrorRowShaking] = useState(false);
   const [hasCreateErrored, setHasCreateErrored] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionAttempts, setSubmissionAttempts] = useState(0);
 
   const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
@@ -102,9 +94,6 @@ export default function CaptureForm() {
 
   const isRawTextAreaLocked = isParsing || parseSuccessful;
 
-  const showErrorForRow = (row: EditableParsedEntryRow) =>
-    errorRowIds.has(row.tempId) && !isRowValid(row);
-
   const handleParse = () => {
     if (!rawTextHasValue || isRawTextAreaLocked) return;
     const trimmed = rawText.trim();
@@ -114,7 +103,7 @@ export default function CaptureForm() {
       onSuccess: parsed => {
         dispatchRows({
           type: RowActionType.SET,
-          rows: parsed.map(p => ({ ...p, tempId: crypto.randomUUID() })),
+          rows: parsed.map(p => ({ ...p, id: crypto.randomUUID() })),
         });
       },
       onError: () => rawTextElement.current?.focus(),
@@ -124,6 +113,7 @@ export default function CaptureForm() {
   const handleBack = () => {
     dispatchRows({ type: RowActionType.SET, rows: [] });
     setHasCreateErrored(false);
+    setSubmissionAttempts(0);
     resetParse();
     resetCreate();
     rawTextElement.current?.focus();
@@ -132,11 +122,8 @@ export default function CaptureForm() {
   const handleCreate = () => {
     if (!rows.length || isSubmitting) return;
 
-    if (!rows.every(isRowValid)) {
-      setErrorRowIds(
-        new Set(rows.filter(r => !isRowValid(r)).map(r => r.tempId))
-      );
-      setErrorRowShaking(true);
+    if (!rows.every(isEntryValid)) {
+      setSubmissionAttempts(n => n + 1);
       return;
     }
 
@@ -145,17 +132,10 @@ export default function CaptureForm() {
       {
         rawText,
         occurredOn,
-        entries: rows.map(({ tempId, ...entry }) => entry),
+        entries: rows.map(({ id, ...entry }) => entry),
       },
       {
         onSuccess: () => {
-          // setRawText('');
-          // setErrorRowIds(new Set());
-          // dispatchRows({ type: RowActionType.SET, rows: [] });
-          // setHasCreateErrored(false);
-          // resetParse();
-          // resetCreate();
-          // rawTextElement.current?.focus();
           router.push('/sessions');
         },
         onError: () => {
@@ -299,158 +279,29 @@ export default function CaptureForm() {
                 </Button>
               )}
             </div>
-            <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2 pb-2 mb-2 border-b-2 border-neutral-300 dark:border-neutral-700">
-              <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700">
-                <span>Instrument</span>
-                <span>Focus</span>
-                <span>Rating</span>
-                <span>Duration</span>
-                <span className="min-w-[40px]" />
-              </div>
-              {rows.length === 0 && (
-                <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-2 self-center justify-center items-center inline-flex gap-2">
-                  <InfoIcon />
-                  <span className="text-neutral-500 dark:text-neutral-400">
-                    Nothing was parsed. Edit your summary to be more specific.
-                  </span>
-                </div>
-              )}
-              {rows.map(row => (
-                <div
-                  key={row.tempId}
-                  className={`grid grid-cols-subgrid col-span-5 gap-2 items-stretch ${
-                    errorRowShaking && showErrorForRow(row)
-                      ? 'animate-shake'
-                      : ''
-                  }`}
-                  onAnimationEnd={() => setErrorRowShaking(false)}
-                >
-                  <input
-                    type="text"
-                    value={row.instrument ?? ''}
-                    onChange={e =>
-                      dispatchRows({
-                        type: RowActionType.UPDATE,
-                        tempId: row.tempId,
-                        patch: { instrument: e.target.value.trim() || null },
-                      })
-                    }
-                    className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
-                      read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400 read-only:cursor-default
-                      ${
-                        showErrorForRow(row)
-                          ? 'outline-red-500 dark:outline-red-400'
-                          : 'outline-transparent focus:outline-transparent'
-                      }`}
-                    aria-disabled={isSubmitting}
-                    readOnly={isSubmitting}
-                    aria-label="Instrument"
-                  />
-                  <FocusInput
-                    focus={row.focus}
-                    error={showErrorForRow(row)}
-                    onChange={next => {
-                      dispatchRows({
-                        type: RowActionType.UPDATE,
-                        tempId: row.tempId,
-                        patch: { focus: next },
-                      });
-                    }}
-                    disabled={isSubmitting}
-                  />
-                  <select
-                    value={row.selfRating ?? ''}
-                    onChange={e => {
-                      if (!isSubmitting)
-                        dispatchRows({
-                          type: RowActionType.UPDATE,
-                          tempId: row.tempId,
-                          patch: {
-                            selfRating:
-                              e.target.value === ''
-                                ? null
-                                : (e.target.value as SelfRating),
-                          },
-                        });
-                    }}
-                    disabled={isSubmitting}
-                    className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2
-                      disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
-                    aria-label="Rating"
-                  >
-                    <option value="" />
-                    {Object.values(SelfRating).map(r => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="number"
-                    min={1}
-                    value={row.durationMin ?? ''}
-                    onChange={e => {
-                      const n =
-                        e.target.value === '' ? null : Number(e.target.value);
-                      dispatchRows({
-                        type: RowActionType.UPDATE,
-                        tempId: row.tempId,
-                        patch: { durationMin: Number.isFinite(n) ? n : null },
-                      });
-                    }}
-                    disabled={isSubmitting}
-                    className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
-                      read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
-                    aria-label="Duration"
-                  />
-                  {!isSubmitting && (
-                    <IconButton
-                      className="self-center"
-                      variant="ghost"
-                      color="error"
-                      onClick={() => {
-                        if (isSubmitting) return;
-                        dispatchRows({
-                          type: RowActionType.DELETE,
-                          tempId: row.tempId,
-                        });
-                      }}
-                      aria-label="Delete row"
-                      aria-disabled={rows.length <= 1 || isSubmitting}
-                    >
-                      <X size={18} strokeWidth={2} />
-                    </IconButton>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div
-              className={`flex items-center justify-end ${!isSubmitting ? 'visible' : 'invisible'}`}
-            >
-              {rows.some(showErrorForRow) && (
-                <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow">
-                  <CircleAlert />
-                  <span className="text-neutral-500 dark:text-neutral-400">
-                    Each entry needs an <strong>instrument</strong> or{' '}
-                    <strong>focus</strong>.
-                  </span>
-                </div>
-              )}
-              <Button
-                variant="ghost"
-                color="secondary"
-                onClick={() => {
-                  if (rows.length < 10 && !isSubmitting)
-                    dispatchRows({
-                      type: RowActionType.ADD,
-                    });
-                }}
-                aria-disabled={rows.length >= 10}
-                icon={Plus}
-              >
-                Add entry
-              </Button>
-            </div>
+            <EntryTable
+              rows={rows}
+              mode={'edit'}
+              validationAttempts={submissionAttempts}
+              onAdd={() =>
+                dispatchRows({
+                  type: RowActionType.ADD,
+                })
+              }
+              onUpdate={(id, patch) => {
+                dispatchRows({
+                  type: RowActionType.UPDATE,
+                  id: id,
+                  patch,
+                });
+              }}
+              onRemove={id => {
+                dispatchRows({
+                  type: RowActionType.DELETE,
+                  id: id,
+                });
+              }}
+            />
           </div>
         </>
       )}

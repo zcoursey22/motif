@@ -30,6 +30,13 @@ export const ParsedEntrySchema = EntryFields.omit({
   sessionId: true,
 });
 
+export const EditableEntrySchema = EntryFields.omit({
+  sessionId: true,
+});
+
+export const isEntryValid = ({ instrument, focus }: ParsedEntry) =>
+  instrument !== null || focus.length > 0;
+
 export const CreateSessionSchema = z.object({
   rawText: z.string().trim().min(1).max(500),
   occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -39,4 +46,5 @@ export type CreateSession = z.infer<typeof CreateSessionSchema>;
 
 export type Entry = z.infer<typeof EntrySchema>;
 export type ParsedEntry = z.infer<typeof ParsedEntrySchema>;
+export type EditableEntry = z.infer<typeof EditableEntrySchema>;
 export type Session = z.infer<typeof SessionSchema>;

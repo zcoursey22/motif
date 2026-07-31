@@ -6,7 +6,8 @@ export function fail(code: AppErrorCode) {
 
 export class AppError extends Error {
   constructor(public code: AppErrorCode) {
-    super(code);
+    super(getErrorMessage(code));
+    this.name = 'AppError';
   }
 }
 
