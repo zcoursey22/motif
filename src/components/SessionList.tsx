@@ -1,53 +1,51 @@
-'use client';
+import { Disc3 } from 'lucide-react';
+import NewSessionButton from './NewSessionButton';
+import { getSessions } from '@/lib/queries/sessions';
 
-import { Session } from '@/lib/schemas/session';
-import { Button } from './ui/Button';
-import { useRouter } from 'next/navigation';
-import { Plus } from 'lucide-react';
+type Props = { sessions: Awaited<ReturnType<typeof getSessions>> };
 
-export default function SessionList() {
-  const router = useRouter();
+export default async function SessionList({ sessions }: Props) {
+  if (!sessions)
+    return (
+      <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300">
+        <Disc3 size={64} strokeWidth={1} className="animate-spin" aria-hidden />
+      </div>
+    );
 
-  const sessions: Session[] = [
-    {
-      id: crypto.randomUUID(),
-      rawText: 'ffdsfdsf ddsfdsdss fdsfdsfdsfsd fds.',
-      occurredOn: '2026-5-13',
-      createdAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      rawText: 'fdsf dsgf dsaf dsfds fds fds fds gsre gsad fgef esds.',
-      occurredOn: '2026-5-17',
-      createdAt: new Date(),
-    },
-    {
-      id: crypto.randomUUID(),
-      rawText: 'dsf dsf dsf dsf ds qaa a.',
-      occurredOn: '2026-5-12',
-      createdAt: new Date(),
-    },
-  ];
+  if (!sessions.length) {
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <span className="text-neutral-500 dark:text-neutral-400">
+          No sessions logged yet.
+        </span>
+        <div className="flex justify-center">
+          <NewSessionButton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 justify-end">
-        <Button
-          color="brand"
-          icon={Plus}
-          onClick={() => router.push('/sessions')}
-        >
-          New session
-        </Button>
+        <NewSessionButton />
       </div>
       <ul className="flex flex-col gap-4">
         {sessions.map(({ id, rawText, occurredOn }) => (
           <li
-            className="flex flex-col gap-2 p-4 bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400 rounded-3xl shadow-sm"
+            className="flex flex-col bg-white dark:bg-neutral-900 text-neutral-500 dark:text-neutral-400 rounded-3xl shadow-sm"
             key={id}
           >
-            <span>{occurredOn}</span>
-            <span>{rawText}</span>
+            {/* <div className="p-4 pb-2 border-b-2 border-neutral-300 dark:border-neutral-700 flex flex-col"> */}
+            <div className="p-4 flex flex-col">
+              <span>{occurredOn}</span>
+              <span>{`"${rawText}"`}</span>
+            </div>
+            {/* <div className="p-4 pt-2 flex flex-col">
+              {entries.map(e => (
+                <div key={e}>{e}</div>
+              ))}
+            </div> */}
           </li>
         ))}
       </ul>

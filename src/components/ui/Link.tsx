@@ -12,6 +12,7 @@ type LinkProps = NextLinkProps &
 export function Link({ className, children, href, ...rest }: LinkProps) {
   const pathname = usePathname();
   const isActive = pathname === href;
+
   return (
     <NextLink
       href={href}

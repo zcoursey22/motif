@@ -73,7 +73,7 @@ export function FocusInput({
         <button
           key={tag}
           type="button"
-          className={`shrink-0 inline-flex items-center gap-1 text-sm px-2 py-0.5 cursor-default rounded-full
+          className={`shrink-0 inline-flex items-center gap-1 font-medium text-sm px-2 py-0.5 cursor-default rounded-full
             ${
               disabled
                 ? 'bg-neutral-100 dark:bg-neutral-500 text-neutral-400 dark:text-neutral-300'

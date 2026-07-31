@@ -1,4 +1,5 @@
 import { LucideIcon } from 'lucide-react';
+import NextLink from 'next/link';
 
 const ButtonVariant = {
   SOLID: 'solid',
@@ -28,7 +29,7 @@ const SOLID_CLASSNAMES: Record<ButtonColor, string> = {
 const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
   primary: `text-blue-500 dark:text-blue-400
     hover:bg-blue-500 dark:hover:bg-blue-400`,
-  secondary: `
+  secondary: `text-neutral-700 dark:text-neutral-300
     hover:bg-neutral-400 dark:hover:bg-neutral-500`,
   success: `text-green-500 dark:text-green-400
     hover:bg-green-500 dark:hover:bg-green-400`,
@@ -41,37 +42,50 @@ const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
 };
 
 const ICON_SIZE = 18;
-const ICON_STROKE = 2;
+const ICON_STROKE = 2.5;
 
 type ButtonProps = {
   variant?: ButtonVariant;
   color?: ButtonColor;
   icon?: LucideIcon;
+  href?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function BaseButton({
   variant = 'solid',
   color = 'secondary',
   icon: Icon,
+  href,
   className,
   children,
   ...rest
 }: ButtonProps) {
-  return (
-    <button
-      className={`min-h-[40px] inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto
-        ${
-          variant === 'solid'
-            ? `text-white aria-disabled:text-neutral-100 aria-disabled:bg-neutral-300 aria-disabled:dark:text-neutral-400 aria-disabled:dark:bg-neutral-600 ${SOLID_CLASSNAMES[color]}`
-            : `hover:text-white
-                aria-disabled:text-neutral-300 dark:aria-disabled:text-neutral-600
-            aria-disabled:hover:bg-transparent aria-disabled:dark:hover:bg-transparent ${GHOST_CLASSNAMES[color]}`
-        }
-        ${className ?? ''}`}
-      {...rest}
-    >
+  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto
+    ${
+      variant === 'solid'
+        ? `text-white aria-disabled:text-neutral-100 aria-disabled:bg-neutral-300 aria-disabled:dark:text-neutral-400 aria-disabled:dark:bg-neutral-600 ${SOLID_CLASSNAMES[color]}`
+        : `hover:text-white aria-disabled:text-neutral-300 dark:aria-disabled:text-neutral-600 aria-disabled:hover:bg-transparent aria-disabled:dark:hover:bg-transparent ${GHOST_CLASSNAMES[color]}`
+    }
+    ${className ?? ''}`;
+
+  const content = (
+    <>
       {Icon && <Icon size={ICON_SIZE} strokeWidth={ICON_STROKE} aria-hidden />}
       {children}
+    </>
+  );
+
+  if (href) {
+    return (
+      <NextLink href={href} className={classes}>
+        {content}
+      </NextLink>
+    );
+  }
+
+  return (
+    <button className={classes} {...rest}>
+      {content}
     </button>
   );
 }

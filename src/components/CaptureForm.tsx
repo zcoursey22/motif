@@ -181,14 +181,14 @@ export default function CaptureForm() {
     <>
       <div
         onClick={handleTextAreaContainerClick}
-        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full p-4 pt-6 pr-3 mb-1 rounded-3xl ${
+        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full p-4 pt-6 rounded-3xl ${
           isRawTextAreaLocked
             ? 'cursor-default bg-neutral-200 dark:bg-neutral-700'
             : 'cursor-text bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg'
         }`}
       >
         <textarea
-          className={`focus:outline-hidden resize-none pl-2 field-sizing-content max-h-42 overflow-y-auto scrollbar-thin scrollbar-gutter-stable placeholder-neutral-400 dark:placeholder-neutral-400 read-only:text-neutral-500 read-only:dark:text-neutral-400 ${
+          className={`focus:outline-hidden resize-none field-sizing-content max-h-42 px-2 overflow-y-auto scrollbar-thin scrollbar-gutter-stable placeholder-neutral-400 dark:placeholder-neutral-400 read-only:text-neutral-500 read-only:dark:text-neutral-400 ${
             isRawTextAreaLocked ? 'cursor-default' : 'cursor-text'
           }`}
           placeholder="How did it go?"
@@ -200,13 +200,13 @@ export default function CaptureForm() {
           ref={rawTextElement}
           autoComplete="off"
         />
-        <div className="flex justify-between items-end pr-1 pointer-events-none">
+        <div className="flex justify-between items-end pointer-events-none">
           <span
-            className={`pl-2 text-sm ${
+            className={`text-sm font-mono whitespace-pre ${
               isRawTextAreaLocked ? 'hidden' : ''
             } ${trimmedLength > 500 ? 'text-red-500 dark:text-red-400' : 'text-neutral-400 dark:text-neutral-400'}`}
           >
-            {`${trimmedLength} / 500`}
+            {`${trimmedLength} / 500`.padStart(9)}
           </span>
           {!isRawTextAreaLocked && (
             <Button
