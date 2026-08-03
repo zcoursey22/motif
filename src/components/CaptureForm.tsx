@@ -7,58 +7,16 @@ import {
   Disc3,
   ScanText,
 } from 'lucide-react';
-import { useReducer, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
-import { EditableEntry, isEntryValid } from '@/lib/schemas/session';
+import { isEntryValid } from '@/lib/schemas/session';
 import { Button } from './ui/Button';
 import { toLocalDateString } from '@/lib/utils/date';
 import { getErrorMessage } from '@/lib/utils/api';
 import { useCreateSession } from '../hooks/useCreateSession';
 import { useRouter } from 'next/navigation';
 import { EntryTable } from './EntryTable';
-
-enum RowActionType {
-  SET,
-  UPDATE,
-  DELETE,
-  ADD,
-}
-
-type RowAction =
-  | { type: RowActionType.SET; rows: EditableEntry[] }
-  | {
-      type: RowActionType.UPDATE;
-      id: string;
-      patch: Partial<EditableEntry>;
-    }
-  | { type: RowActionType.DELETE; id: string }
-  | { type: RowActionType.ADD };
-
-const getEmptyRow = (): EditableEntry => ({
-  id: crypto.randomUUID(),
-  instrument: null,
-  focus: [],
-  selfRating: null,
-  durationMin: null,
-});
-
-const rowReducer = (
-  state: EditableEntry[],
-  action: RowAction
-): EditableEntry[] => {
-  switch (action.type) {
-    case RowActionType.SET:
-      return action.rows.length ? action.rows : [];
-    case RowActionType.UPDATE:
-      return state.map(r =>
-        r.id === action.id ? { ...r, ...action.patch } : r
-      );
-    case RowActionType.DELETE:
-      return state.length <= 1 ? state : state.filter(r => r.id !== action.id);
-    case RowActionType.ADD:
-      return [...state, getEmptyRow()];
-  }
-};
+import { useEntryRows } from '@/hooks/useEntryRows';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
@@ -67,9 +25,9 @@ export default function CaptureForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionAttempts, setSubmissionAttempts] = useState(0);
 
-  const rawTextElement = useRef<HTMLTextAreaElement>(null);
+  const { rows, setRows, updateRow, removeRow, addRow } = useEntryRows([]);
 
-  const [rows, dispatchRows] = useReducer(rowReducer, null, () => []);
+  const rawTextElement = useRef<HTMLTextAreaElement>(null);
 
   const router = useRouter();
 
@@ -101,17 +59,14 @@ export default function CaptureForm() {
     rawTextElement.current?.blur();
     parse(trimmed, {
       onSuccess: parsed => {
-        dispatchRows({
-          type: RowActionType.SET,
-          rows: parsed.map(p => ({ ...p, id: crypto.randomUUID() })),
-        });
+        setRows(parsed.map(p => ({ ...p, id: crypto.randomUUID() })));
       },
       onError: () => rawTextElement.current?.focus(),
     });
   };
 
   const handleBack = () => {
-    dispatchRows({ type: RowActionType.SET, rows: [] });
+    setRows([]);
     setHasCreateErrored(false);
     setSubmissionAttempts(0);
     resetParse();
@@ -283,24 +238,10 @@ export default function CaptureForm() {
               rows={rows}
               mode={'edit'}
               validationAttempts={submissionAttempts}
-              onAdd={() =>
-                dispatchRows({
-                  type: RowActionType.ADD,
-                })
-              }
-              onUpdate={(id, patch) => {
-                dispatchRows({
-                  type: RowActionType.UPDATE,
-                  id: id,
-                  patch,
-                });
-              }}
-              onRemove={id => {
-                dispatchRows({
-                  type: RowActionType.DELETE,
-                  id: id,
-                });
-              }}
+              onAdd={addRow}
+              onUpdate={updateRow}
+              onRemove={removeRow}
+              isBusy={isSubmitting}
             />
           </div>
         </>

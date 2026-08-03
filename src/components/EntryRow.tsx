@@ -1,3 +1,5 @@
+'use client';
+
 import { EditableEntry } from '@/lib/schemas/session';
 import { FocusInput } from './FocusInput';
 import { SelfRating } from '@/lib/constants';
@@ -42,7 +44,7 @@ export function EntryRow({
         type="text"
         value={instrument ?? ''}
         onChange={e => {
-          if (isBusy) return;
+          if (isBusy || mode === 'read') return;
           onUpdate?.(id, {
             instrument: e.target.value.trim() || null,
           });
@@ -54,8 +56,8 @@ export function EntryRow({
                           ? 'outline-red-500 dark:outline-red-400'
                           : 'outline-transparent focus:outline-transparent'
                       }`}
-        aria-disabled={isBusy}
-        readOnly={isBusy}
+        aria-disabled={isBusy || mode === 'read'}
+        readOnly={isBusy || mode === 'read'}
         aria-label="Instrument"
       />
       <FocusInput
@@ -66,18 +68,18 @@ export function EntryRow({
             focus: next,
           });
         }}
-        disabled={isBusy}
+        disabled={isBusy || mode === 'read'}
       />
       <select
         value={selfRating ?? ''}
         onChange={e => {
-          if (isBusy) return;
+          if (isBusy || mode === 'read') return;
           onUpdate?.(id, {
             selfRating:
               e.target.value === '' ? null : (e.target.value as SelfRating),
           });
         }}
-        disabled={isBusy}
+        disabled={isBusy || mode === 'read'}
         className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2
                       disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
         aria-label="Rating"
@@ -94,16 +96,16 @@ export function EntryRow({
         min={1}
         value={durationMin ?? ''}
         onChange={e => {
-          if (isBusy) return;
+          if (isBusy || mode === 'read') return;
           const n = e.target.value === '' ? null : Number(e.target.value);
           onUpdate?.(id, { durationMin: Number.isFinite(n) ? n : null });
         }}
-        disabled={isBusy}
+        disabled={isBusy || mode === 'read'}
         className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
         aria-label="Duration"
       />
-      {!isBusy && (
+      {!isBusy && mode === 'edit' && (
         <IconButton
           className="self-center"
           variant="ghost"

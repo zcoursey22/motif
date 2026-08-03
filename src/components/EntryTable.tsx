@@ -1,3 +1,5 @@
+'use client';
+
 import { EditableEntry, isEntryValid } from '@/lib/schemas/session';
 import { AppError } from '@/lib/utils/api';
 import { EntryRow } from './EntryRow';
@@ -73,33 +75,35 @@ export function EntryTable({
           />
         ))}
       </div>
-      <div
-        className={`flex items-center justify-end ${!isBusy ? 'visible' : 'invisible'}`}
-      >
+      {mode === 'edit' && (
         <div
-          className={`text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow
-          ${!!invalidRowIds.length && validationAttempts > 0 ? 'visible' : 'invisible'}`}
+          className={`flex items-center justify-end ${!isBusy ? 'visible' : 'invisible'}`}
         >
-          <CircleAlert />
-          <span className="text-neutral-500 dark:text-neutral-400">
-            Each entry needs an <strong>instrument</strong> or{' '}
-            <strong>focus</strong>.
-          </span>
-        </div>
-        {onAdd && (
-          <Button
-            variant="ghost"
-            color="secondary"
-            onClick={() => {
-              if (rows.length < MAX_ROWS && !isBusy) onAdd?.();
-            }}
-            aria-disabled={rows.length >= MAX_ROWS}
-            icon={Plus}
+          <div
+            className={`text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow
+          ${!!invalidRowIds.length && validationAttempts > 0 ? 'visible' : 'invisible'}`}
           >
-            Add entry
-          </Button>
-        )}
-      </div>
+            <CircleAlert />
+            <span className="text-neutral-500 dark:text-neutral-400">
+              Each entry needs an <strong>instrument</strong> or{' '}
+              <strong>focus</strong>.
+            </span>
+          </div>
+          {onAdd && (
+            <Button
+              variant="ghost"
+              color="secondary"
+              onClick={() => {
+                if (rows.length < MAX_ROWS && !isBusy) onAdd?.();
+              }}
+              aria-disabled={rows.length >= MAX_ROWS}
+              icon={Plus}
+            >
+              Add entry
+            </Button>
+          )}
+        </div>
+      )}
     </>
   );
 }
