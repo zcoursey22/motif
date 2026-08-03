@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/client';
 import { entries, sessions } from '@/lib/db/schema';
-import { CreateSessionSchema } from '@/lib/schemas/session';
+import { CreateSessionPayloadSchema } from '@/lib/schemas/session';
 import { fail } from '@/lib/utils/api';
 import { NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     return fail('bad_request');
   }
 
-  const input = CreateSessionSchema.safeParse(body);
+  const input = CreateSessionPayloadSchema.safeParse(body);
   if (!input.success) return fail('bad_request');
 
   await new Promise(r => setTimeout(r, 1500));
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     ];
     return responses[Math.floor(Math.random() * responses.length)];
   } catch (e) {
-    console.error('[sessions]', e);
+    console.error('[sessions CREATE]', e);
     return fail('internal_error');
   }
 }

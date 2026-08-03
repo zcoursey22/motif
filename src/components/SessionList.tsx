@@ -1,11 +1,17 @@
+'use client';
+
 import { Disc3 } from 'lucide-react';
 import NewSessionButton from './NewSessionButton';
-import { getSessions } from '@/lib/queries/sessions';
 import SessionCard from './SessionCard';
+import { useSessions } from '@/hooks/useSessions';
 
-type Props = { sessions: Awaited<ReturnType<typeof getSessions>> };
+export default function SessionList() {
+  const { data: sessions, isLoading, isError } = useSessions();
 
-export default async function SessionList({ sessions }: Props) {
+  if (isError) return <div>An error occurred.</div>;
+
+  if (isLoading) return <div>Loading...</div>;
+
   if (!sessions)
     return (
       <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300">

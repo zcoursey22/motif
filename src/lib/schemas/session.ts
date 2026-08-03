@@ -37,12 +37,17 @@ export const EditableEntrySchema = EntryFields.omit({
 export const isEntryValid = ({ instrument, focus }: ParsedEntry) =>
   instrument !== null || focus.length > 0;
 
-export const CreateSessionSchema = z.object({
+export const CreateSessionPayloadSchema = z.object({
   rawText: z.string().trim().min(1).max(500),
   occurredOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   entries: z.array(ParsedEntrySchema).min(1),
 });
-export type CreateSession = z.infer<typeof CreateSessionSchema>;
+export type CreateSessionPayload = z.infer<typeof CreateSessionPayloadSchema>;
+
+export const UpdateSessionPayloadSchema = CreateSessionPayloadSchema.omit({
+  rawText: true,
+}).partial({ occurredOn: true });
+export type UpdateSessionPayload = z.infer<typeof UpdateSessionPayloadSchema>;
 
 export type Entry = z.infer<typeof EntrySchema>;
 export type ParsedEntry = z.infer<typeof ParsedEntrySchema>;

@@ -13,7 +13,7 @@ import { isEntryValid } from '@/lib/schemas/session';
 import { Button } from './ui/Button';
 import { toLocalDateString } from '@/lib/utils/date';
 import { getErrorMessage } from '@/lib/utils/api';
-import { useCreateSession } from '../hooks/useCreateSession';
+import { useCreateSession } from '../hooks/useSessions';
 import { useRouter } from 'next/navigation';
 import { EntryTable } from './EntryTable';
 import { useEntryRows } from '@/hooks/useEntryRows';

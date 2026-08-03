@@ -6,3 +6,5 @@ export const SelfRating = {
 } as const;
 
 export type SelfRating = (typeof SelfRating)[keyof typeof SelfRating];
+
+export const SESSIONS_QUERY_KEY = 'sessions';

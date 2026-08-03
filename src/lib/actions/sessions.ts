@@ -1,4 +1,5 @@
-import 'server-only';
+'use server';
+
 import { db } from '../db/client';
 
 export async function getSessions() {

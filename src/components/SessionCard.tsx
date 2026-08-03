@@ -2,19 +2,26 @@
 
 import { useState } from 'react';
 import { isEntryValid } from '@/lib/schemas/session';
-import { getSessions } from '@/lib/queries/sessions';
+import { getSessions } from '@/lib/actions/sessions';
 import { EntryTable } from './EntryTable';
 import { Button, IconButton } from './ui/Button';
 import { useEntryRows } from '@/hooks/useEntryRows';
 import { Edit, Trash2 } from 'lucide-react';
 import { parseLocalDate } from '@/lib/utils/date';
+import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
 
 type Props = { session: Awaited<ReturnType<typeof getSessions>>[number] };
 
 export default function SessionCard({ session }: Props) {
-  const { occurredOn, rawText, entries } = session;
+  const { id, rawText, entries } = session;
+
+  const [occurredOn, setOccurredOn] = useState(session.occurredOn);
 
   const { rows, setRows, updateRow, removeRow, addRow } = useEntryRows(entries);
+
+  const { mutate: updateSession } = useUpdateSession();
+
+  const { mutate: deleteSession } = useDeleteSession();
 
   const [mode, setMode] = useState<'read' | 'edit'>('read');
   const [validationAttempts, setValidationAttempts] = useState(0);
@@ -29,12 +36,24 @@ export default function SessionCard({ session }: Props) {
     }
 
     setIsBusy(true);
-    // TODO: useUpdateSession
+    updateSession(
+      {
+        id,
+        payload: { occurredOn, entries: rows },
+      },
+      {
+        onSuccess: () => {
+          setIsBusy(false);
+          setMode('read');
+        },
+      }
+    );
   };
 
   const handleEditCancel = () => {
     if (isBusy) return;
 
+    setOccurredOn(session.occurredOn);
     setRows(entries);
     setMode('read');
   };
@@ -43,7 +62,7 @@ export default function SessionCard({ session }: Props) {
     if (isBusy) return;
 
     setIsBusy(true);
-    // TODO: useDeleteSession
+    deleteSession({ id });
   };
 
   const getDateString = () => {
@@ -71,7 +90,7 @@ export default function SessionCard({ session }: Props) {
                     if (!isBusy) setMode('edit');
                   }}
                   aria-disabled={isBusy}
-                  aria-label="Delete session"
+                  aria-label="Edit session"
                 >
                   <Edit />
                 </IconButton>
@@ -80,7 +99,7 @@ export default function SessionCard({ session }: Props) {
                   color="error"
                   onClick={handleDelete}
                   aria-disabled={isBusy}
-                  aria-label="Edit session"
+                  aria-label="Delete session"
                 >
                   <Trash2 />
                 </IconButton>
