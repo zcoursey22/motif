@@ -16,7 +16,7 @@ export default async function Sessions() {
   });
 
   return (
-    <main className="flex flex-col gap-4 grow items-stretch justify-start w-3xl pt-[25vh]">
+    <main className="flex flex-col gap-4 grow items-stretch justify-start w-3xl">
       <h1 className="text-xl text-neutral-700 dark:text-neutral-300 text-center sr-only">
         Sessions
       </h1>
