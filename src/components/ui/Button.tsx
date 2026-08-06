@@ -29,7 +29,7 @@ const SOLID_CLASSNAMES: Record<ButtonColor, string> = {
 const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
   primary: `text-blue-500 dark:text-blue-400
     hover:bg-blue-500 dark:hover:bg-blue-400`,
-  secondary: `text-neutral-700 dark:text-neutral-300
+  secondary: `text-neutral-700 dark:text-neutral-200
     hover:bg-neutral-400 dark:hover:bg-neutral-500`,
   success: `text-green-500 dark:text-green-400
     hover:bg-green-500 dark:hover:bg-green-400`,
@@ -49,6 +49,7 @@ type ButtonProps = {
   color?: ButtonColor;
   icon?: LucideIcon;
   href?: string;
+  iconClassName?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function BaseButton({
@@ -58,19 +59,27 @@ function BaseButton({
   href,
   className,
   children,
+  iconClassName,
   ...rest
 }: ButtonProps) {
   const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto
     ${
       variant === 'solid'
-        ? `text-white aria-disabled:text-neutral-100 aria-disabled:bg-neutral-300 aria-disabled:dark:text-neutral-400 aria-disabled:dark:bg-neutral-600 ${SOLID_CLASSNAMES[color]}`
+        ? `text-white aria-disabled:text-neutral-100 aria-disabled:bg-neutral-300 aria-disabled:dark:text-neutral-400 aria-disabled:dark:bg-neutral-700 ${SOLID_CLASSNAMES[color]}`
         : `hover:text-white aria-disabled:text-neutral-300 dark:aria-disabled:text-neutral-600 aria-disabled:hover:bg-transparent aria-disabled:dark:hover:bg-transparent ${GHOST_CLASSNAMES[color]}`
     }
     ${className ?? ''}`;
 
   const content = (
     <>
-      {Icon && <Icon size={ICON_SIZE} strokeWidth={ICON_STROKE} aria-hidden />}
+      {Icon && (
+        <Icon
+          size={ICON_SIZE}
+          strokeWidth={ICON_STROKE}
+          className={iconClassName}
+          aria-hidden
+        />
+      )}
       {children}
     </>
   );

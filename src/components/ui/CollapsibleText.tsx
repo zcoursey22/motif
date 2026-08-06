@@ -44,12 +44,9 @@ export function CollapsibleText({
           aria-expanded={expanded}
           aria-label={expanded ? 'Collapse text' : 'Expand text'}
           className="shrink-0"
-        >
-          <ChevronDown
-            size={18}
-            className={`transition-transform duration-100 ${expanded ? 'rotate-180' : ''}`}
-          />
-        </IconButton>
+          icon={ChevronDown}
+          iconClassName={`transition-transform duration-100 ${expanded ? 'rotate-180' : ''}`}
+        />
       )}
     </div>
   );

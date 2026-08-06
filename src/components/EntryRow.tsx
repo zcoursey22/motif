@@ -49,7 +49,7 @@ export function EntryRow({
             instrument: e.target.value.trim() || null,
           });
         }}
-        className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
+        className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
                       read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400 read-only:cursor-default
                       ${
                         isInvalid
@@ -80,7 +80,7 @@ export function EntryRow({
           });
         }}
         disabled={isBusy || mode === 'read'}
-        className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2
+        className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2
                       disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
         aria-label="Rating"
       >
@@ -101,7 +101,7 @@ export function EntryRow({
           onUpdate?.(id, { durationMin: Number.isFinite(n) ? n : null });
         }}
         disabled={isBusy || mode === 'read'}
-        className={`bg-white dark:bg-neutral-900 shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
+        className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
         aria-label="Duration"
       />

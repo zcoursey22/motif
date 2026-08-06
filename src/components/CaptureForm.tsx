@@ -119,8 +119,8 @@ export default function CaptureForm() {
         onClick={handleTextAreaContainerClick}
         className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl ${
           isRawTextAreaLocked
-            ? 'cursor-default bg-neutral-200 dark:bg-neutral-700 p-2'
-            : 'cursor-text bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg p-4 pt-6'
+            ? 'cursor-default bg-neutral-100 dark:bg-neutral-900 p-2'
+            : 'cursor-text bg-white dark:bg-black shadow-sm focus-within:shadow-lg p-4 pt-6'
         }`}
       >
         {isRawTextAreaLocked ? (
@@ -148,7 +148,7 @@ export default function CaptureForm() {
           <span
             className={`text-sm font-mono whitespace-pre ${
               isRawTextAreaLocked ? 'hidden' : ''
-            } ${trimmedLength > 500 ? 'text-red-500 dark:text-red-400' : 'text-neutral-400 dark:text-neutral-400'}`}
+            } ${trimmedLength > 500 ? 'text-red-500 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'}`}
           >
             {`${trimmedLength} / 500`.padStart(9)}
           </span>
@@ -178,7 +178,7 @@ export default function CaptureForm() {
       {!isParsing && parseFailed && (
         <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2">
           <CircleAlert />
-          <span className="text-neutral-500 dark:text-neutral-400">
+          <span className="text-neutral-600 dark:text-neutral-300">
             {getErrorMessage(parseError.message)}
           </span>
         </div>
@@ -191,7 +191,7 @@ export default function CaptureForm() {
                 ${createFailed && !isSubmitting ? 'visible' : 'invisible'}`}
             >
               <CircleAlert />
-              <span className="text-neutral-500 dark:text-neutral-400">
+              <span className="text-neutral-600 dark:text-neutral-300">
                 {getErrorMessage(createError?.message || '')}
               </span>
             </div>
@@ -209,7 +209,7 @@ export default function CaptureForm() {
                 </Button>
               )}
               <div className="flex gap-2 items-center justify-end grow">
-                <span className="text-neutral-500 dark:text-neutral-400">
+                <span className="text-neutral-600 dark:text-neutral-300">
                   Practiced on
                 </span>
                 <input
@@ -218,7 +218,7 @@ export default function CaptureForm() {
                   onChange={e => setOccurredOn(e.target.value)}
                   aria-disabled={isSubmitting}
                   readOnly={isSubmitting}
-                  className="bg-white dark:bg-neutral-900 shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400"
+                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400"
                 />
               </div>
               {isSubmitting ? (

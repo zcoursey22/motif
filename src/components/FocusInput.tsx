@@ -57,7 +57,7 @@ export function FocusInput({
 
   return (
     <div
-      className={`input-wrapper scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-neutral-900 shadow-sm rounded-2xl px-3 py-1.5 outline-2 focus-within:shadow-lg ${
+      className={`input-wrapper scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-black shadow-sm rounded-2xl px-3 py-1.5 outline-2 focus-within:shadow-lg ${
         error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'
       } ${
         disabled
@@ -76,7 +76,7 @@ export function FocusInput({
           className={`shrink-0 inline-flex items-center gap-1 font-medium text-sm px-2 py-0.5 cursor-default rounded-full
             ${
               disabled
-                ? 'bg-neutral-100 dark:bg-neutral-500 text-neutral-400 dark:text-neutral-300'
+                ? 'bg-neutral-300 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400'
                 : 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-200'
             }`}
           onKeyDown={e => handleTagKeyDown(e, tag)}

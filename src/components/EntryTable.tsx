@@ -34,7 +34,7 @@ export function EntryTable({
   return (
     <>
       <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2 pb-2 mb-2 border-b-2 border-neutral-300 dark:border-neutral-700">
-        <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700">
+        <div className="grid grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-600 dark:text-neutral-300 border-b-2 border-neutral-300 dark:border-neutral-700">
           <span>Instrument</span>
           <span>Focus</span>
           <span>Rating</span>
@@ -44,7 +44,7 @@ export function EntryTable({
         {rows.length === 0 && !listError && (
           <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-2 self-center justify-center items-center inline-flex gap-2">
             <InfoIcon />
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className="text-neutral-600 dark:text-neutral-300">
               Nothing was parsed. Edit your summary to be more specific.
             </span>
           </div>
@@ -52,7 +52,7 @@ export function EntryTable({
         {!!listError && (
           <div className="grid grid-cols-subgrid col-span-5 text-red-500 dark:text-red-400 py-2 self-center justify-center items-center inline-flex gap-2">
             <CircleAlert />
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className="text-neutral-600 dark:text-neutral-300">
               {listError.message}
             </span>
           </div>
@@ -84,7 +84,7 @@ export function EntryTable({
           ${!!invalidRowIds.length && validationAttempts > 0 ? 'visible' : 'invisible'}`}
           >
             <CircleAlert />
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className="text-neutral-600 dark:text-neutral-300">
               Each entry needs an <strong>instrument</strong> or{' '}
               <strong>focus</strong>.
             </span>

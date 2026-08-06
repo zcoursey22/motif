@@ -18,7 +18,7 @@ export function ExternalLink({
     <a
       target="_blank"
       rel={`noopener noreferrer${isMe ? ' me' : ''}`}
-      className={`${LINK} text-indigo-900 dark:text-indigo-100 ${className ?? ''}`}
+      className={`${LINK} text-indigo-600 dark:text-indigo-300 ${className ?? ''}`}
       {...rest}
     >
       {children}

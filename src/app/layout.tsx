@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col min-h-screen">
         <Providers>
-          <header className="sticky top-0 z-10 flex items-center justify-between px-8 py-2 bg-neutral-100 dark:bg-neutral-800 shadow-lg shadow-neutral-100/100 dark:shadow-neutral-800/100">
+          <header className="sticky top-0 z-10 flex items-center justify-between px-8 py-2 bg-neutral-200 dark:bg-neutral-800 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
             <NextLink href="/" className="flex gap-2 p-2">
               <Activity
                 size={28}
@@ -49,10 +49,10 @@ export default function RootLayout({
             </NextLink>
             <Nav />
           </header>
-          <div className="flex grow flex-col items-center bg-neutral-100 dark:bg-neutral-800 px-8 pt-4 pb-8">
+          <div className="flex grow flex-col items-center bg-neutral-200 dark:bg-neutral-800 px-8 pt-4 pb-8">
             {children}
           </div>
-          <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-8 py-2 text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800">
+          <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-8 py-2 text-sm text-neutral-600 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-800">
             <ExternalLink
               icon={LuGithub}
               href="https://github.com/zcoursey22/motif"

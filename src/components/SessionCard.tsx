@@ -9,6 +9,7 @@ import { useEntryRows } from '@/hooks/useEntryRows';
 import { Edit, Trash2 } from 'lucide-react';
 import { parseLocalDate } from '@/lib/utils/date';
 import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
+import { CollapsibleText } from './ui/CollapsibleText';
 
 type Props = { session: Awaited<ReturnType<typeof getSessions>>[number] };
 
@@ -77,10 +78,10 @@ export default function SessionCard({ session }: Props) {
   };
 
   return (
-    <div className="flex flex-col bg-neutral-200 dark:bg-black rounded-3xl shadow-sm">
-      <div className="p-4 gap-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700 flex flex-col">
+    <div className="flex flex-col bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm">
+      <div className="p-4 gap-2 text-neutral-600 dark:text-neutral-300 border-b-2 border-neutral-300 dark:border-neutral-700 flex flex-col">
         <div className="flex justify-between">
-          <span className="min-h-[40px]">{getDateString()}</span>
+          <span className="min-h-[40px] pt-2 pl-2">{getDateString()}</span>
           <div className="flex gap-2">
             {mode === 'read' ? (
               <>
@@ -126,7 +127,7 @@ export default function SessionCard({ session }: Props) {
             )}
           </div>
         </div>
-        <span>{`"${rawText}"`}</span>
+        <CollapsibleText text={rawText} spanClassName="pl-2 py-2" />
       </div>
 
       <div className="px-4 pb-4">
