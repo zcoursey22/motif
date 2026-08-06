@@ -17,6 +17,7 @@ import { useCreateSession } from '../hooks/useSessions';
 import { useRouter } from 'next/navigation';
 import { EntryTable } from './EntryTable';
 import { useEntryRows } from '@/hooks/useEntryRows';
+import { CollapsibleText } from './ui/CollapsibleText';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
@@ -116,25 +117,33 @@ export default function CaptureForm() {
     <>
       <div
         onClick={handleTextAreaContainerClick}
-        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full p-4 pt-6 rounded-3xl ${
+        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl ${
           isRawTextAreaLocked
-            ? 'cursor-default bg-neutral-200 dark:bg-neutral-700'
-            : 'cursor-text bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg'
+            ? 'cursor-default bg-neutral-200 dark:bg-neutral-700 p-2'
+            : 'cursor-text bg-white dark:bg-neutral-900 shadow-sm focus-within:shadow-lg p-4 pt-6'
         }`}
       >
-        <textarea
-          className={`focus:outline-hidden resize-none field-sizing-content max-h-42 px-2 overflow-y-auto scrollbar-thin scrollbar-gutter-stable placeholder-neutral-400 dark:placeholder-neutral-400 read-only:text-neutral-500 read-only:dark:text-neutral-400 ${
-            isRawTextAreaLocked ? 'cursor-default' : 'cursor-text'
-          }`}
-          placeholder="How did it go?"
-          onChange={e => setRawText(e.currentTarget.value)}
-          value={rawText}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          readOnly={isRawTextAreaLocked}
-          ref={rawTextElement}
-          autoComplete="off"
-        />
+        {isRawTextAreaLocked ? (
+          <CollapsibleText
+            text={rawText}
+            className="text-neutral-500 dark:text-neutral-400 pt-2 pl-4 pr-2"
+            spanClassName="py-2"
+          />
+        ) : (
+          <textarea
+            className={`focus:outline-hidden resize-none field-sizing-content max-h-42 px-2 overflow-y-auto scrollbar-thin scrollbar-gutter-stable placeholder-neutral-400 dark:placeholder-neutral-400 read-only:text-neutral-500 read-only:dark:text-neutral-400 ${
+              isRawTextAreaLocked ? 'cursor-default' : 'cursor-text'
+            }`}
+            placeholder="How did it go?"
+            onChange={e => setRawText(e.currentTarget.value)}
+            value={rawText}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            readOnly={isRawTextAreaLocked}
+            ref={rawTextElement}
+            autoComplete="off"
+          />
+        )}
         <div className="flex justify-between items-end pointer-events-none">
           <span
             className={`text-sm font-mono whitespace-pre ${
