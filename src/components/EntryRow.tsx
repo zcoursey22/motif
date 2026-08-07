@@ -50,7 +50,7 @@ export function EntryRow({
           });
         }}
         className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
-                      read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400 read-only:cursor-default
+                      read-only:field-busy read-only:cursor-default
                       ${
                         isInvalid
                           ? 'outline-red-500 dark:outline-red-400'
@@ -81,7 +81,7 @@ export function EntryRow({
         }}
         disabled={isBusy || mode === 'read'}
         className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2
-                      disabled:bg-neutral-200 disabled:dark:bg-neutral-700 disabled:text-neutral-500 disabled:dark:text-neutral-400`}
+                      disabled:field-busy`}
         aria-label="Rating"
       >
         <option value="" />
@@ -102,7 +102,7 @@ export function EntryRow({
         }}
         disabled={isBusy || mode === 'read'}
         className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
-                      read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400`}
+                      read-only:field-busy`}
         aria-label="Duration"
       />
       {!isBusy && mode === 'edit' && (

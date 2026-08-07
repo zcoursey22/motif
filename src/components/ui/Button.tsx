@@ -62,11 +62,11 @@ function BaseButton({
   iconClassName,
   ...rest
 }: ButtonProps) {
-  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto
+  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto aria-disabled:pointer-events-none aria-disabled:field-busy
     ${
       variant === 'solid'
-        ? `text-white aria-disabled:text-neutral-100 aria-disabled:bg-neutral-300 aria-disabled:dark:text-neutral-400 aria-disabled:dark:bg-neutral-700 ${SOLID_CLASSNAMES[color]}`
-        : `hover:text-white aria-disabled:text-neutral-300 dark:aria-disabled:text-neutral-600 aria-disabled:hover:bg-transparent aria-disabled:dark:hover:bg-transparent ${GHOST_CLASSNAMES[color]}`
+        ? `text-white ${SOLID_CLASSNAMES[color]}`
+        : `hover:text-white ${GHOST_CLASSNAMES[color]}`
     }
     ${className ?? ''}`;
 

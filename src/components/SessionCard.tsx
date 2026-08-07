@@ -78,10 +78,14 @@ export default function SessionCard({ session }: Props) {
   };
 
   return (
-    <div className="flex flex-col bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm">
-      <div className="p-4 gap-2 text-neutral-600 dark:text-neutral-300 border-b-2 border-neutral-300 dark:border-neutral-700 flex flex-col">
+    <div className="flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm">
+      <div
+        className={`px-4 pt-4 gap-2 text-neutral-600 dark:text-neutral-300 flex flex-col ${
+          mode === 'edit' ? '' : 'pb-2'
+        }`}
+      >
         <div className="flex justify-between">
-          <span className="min-h-[40px] pt-2 pl-2">{getDateString()}</span>
+          <span className="min-h-[40px] pl-2 pt-2">{getDateString()}</span>
           <div className="flex gap-2">
             {mode === 'read' ? (
               <>
@@ -127,10 +131,13 @@ export default function SessionCard({ session }: Props) {
             )}
           </div>
         </div>
-        <CollapsibleText text={rawText} spanClassName="pl-2 py-2" />
+        <CollapsibleText text={rawText} spanClassName="py-2" />
       </div>
 
-      <div className="px-4 pb-4">
+      <div
+        className={`[--entry-input-busy-bg:theme(colors.neutral.200)] dark:[--entry-input-busy-bg:theme(colors.neutral.800)]
+        ${mode === 'edit' ? 'pb-4 px-4' : 'pb-4 pl-4 pr-2'}`}
+      >
         <EntryTable
           rows={rows}
           mode={mode}

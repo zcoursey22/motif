@@ -52,7 +52,7 @@ export default function RootLayout({
           <div className="flex grow flex-col items-center bg-neutral-200 dark:bg-neutral-800 px-8 pt-4 pb-8">
             {children}
           </div>
-          <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-8 py-2 text-sm text-neutral-600 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-800">
+          <footer className="flex border-t-2 border-neutral-300 dark:border-neutral-700 gap-8 items-center justify-center px-8 py-2 text-sm text-neutral-500 dark:text-neutral-400 bg-neutral-200 dark:bg-neutral-800">
             <ExternalLink
               icon={LuGithub}
               href="https://github.com/zcoursey22/motif"

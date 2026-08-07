@@ -41,7 +41,7 @@ select,
 .input-wrapper {
   transition-property:
     color, background-color, border-color, box-shadow, outline, border,
-    background;
+    background, filter;
   transition-duration: 100ms;
 }
 
@@ -76,4 +76,14 @@ select,
 
 .scrollbar-hide {
   scrollbar-width: none;
+}
+
+@utility field-busy {
+  opacity: 0.75;
+  filter: contrast(0.4) brightness(1.15);
+
+  @variant dark {
+    opacity: 0.75;
+    filter: contrast(0.9) brightness(0.5);
+  }
 }

@@ -57,13 +57,9 @@ export function FocusInput({
 
   return (
     <div
-      className={`input-wrapper scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-black shadow-sm rounded-2xl px-3 py-1.5 outline-2 focus-within:shadow-lg ${
+      className={`input-wrapper scrollbar-hide flex flex-nowrap items-center gap-1.5 overflow-x-auto bg-white dark:bg-black shadow-xs rounded-2xl px-3 py-1.5 outline-2 focus-within:shadow-md ${
         error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'
-      } ${
-        disabled
-          ? 'cursor-default read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400'
-          : 'cursor-text'
-      }`}
+      } ${disabled ? 'cursor-default read-only:field-busy' : 'cursor-text'}`}
       onClick={e => {
         if (disabled) return;
         (e.currentTarget.querySelector('input') as HTMLInputElement)?.focus();
@@ -74,10 +70,11 @@ export function FocusInput({
           key={tag}
           type="button"
           className={`shrink-0 inline-flex items-center gap-1 font-medium text-sm px-2 py-0.5 cursor-default rounded-full
+            bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200
             ${
               disabled
-                ? 'bg-neutral-300 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400'
-                : 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-200'
+                ? ''
+                : ' hover:bg-red-100 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-200'
             }`}
           onKeyDown={e => handleTagKeyDown(e, tag)}
           onClick={e => {

@@ -117,16 +117,16 @@ export default function CaptureForm() {
     <>
       <div
         onClick={handleTextAreaContainerClick}
-        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl ${
+        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl bg-white dark:bg-black ${
           isRawTextAreaLocked
-            ? 'cursor-default bg-neutral-100 dark:bg-neutral-900 p-2'
-            : 'cursor-text bg-white dark:bg-black shadow-sm focus-within:shadow-lg p-4 pt-6'
+            ? 'cursor-default p-2 read-only:field-busy'
+            : 'cursor-text shadow-sm focus-within:shadow-lg p-4 pt-6'
         }`}
       >
         {isRawTextAreaLocked ? (
           <CollapsibleText
             text={rawText}
-            className="text-neutral-500 dark:text-neutral-400 pt-2 pl-4 pr-2"
+            className="pt-2 pl-4 pr-2"
             spanClassName="py-2"
           />
         ) : (
@@ -209,7 +209,7 @@ export default function CaptureForm() {
                 </Button>
               )}
               <div className="flex gap-2 items-center justify-end grow">
-                <span className="text-neutral-600 dark:text-neutral-300">
+                <span className="font-medium text-neutral-500 dark:text-neutral-400">
                   Practiced on
                 </span>
                 <input
@@ -218,7 +218,7 @@ export default function CaptureForm() {
                   onChange={e => setOccurredOn(e.target.value)}
                   aria-disabled={isSubmitting}
                   readOnly={isSubmitting}
-                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:bg-neutral-200 read-only:dark:bg-neutral-700 read-only:text-neutral-500 read-only:dark:text-neutral-400"
+                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:field-busy"
                 />
               </div>
               {isSubmitting ? (
@@ -243,15 +243,17 @@ export default function CaptureForm() {
                 </Button>
               )}
             </div>
-            <EntryTable
-              rows={rows}
-              mode={'edit'}
-              validationAttempts={submissionAttempts}
-              onAdd={addRow}
-              onUpdate={updateRow}
-              onRemove={removeRow}
-              isBusy={isSubmitting}
-            />
+            <div className="[--entry-input-busy-bg:theme(colors.neutral.100)] dark:[--entry-input-busy-bg:theme(colors.neutral.800)]">
+              <EntryTable
+                rows={rows}
+                mode={'edit'}
+                validationAttempts={submissionAttempts}
+                onAdd={addRow}
+                onUpdate={updateRow}
+                onRemove={removeRow}
+                isBusy={isSubmitting}
+              />
+            </div>
           </div>
         </>
       )}
