@@ -34,15 +34,15 @@ export function EntryTable({
   return (
     <>
       <div
-        className={`grid grid-cols-[minmax(0,3fr)_minmax(0,6fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2
+        className={`grid grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-2
         ${mode === 'edit' ? 'pb-2 mb-2 border-b-2 border-neutral-300 dark:border-neutral-700' : ''}`}
       >
         {mode === 'edit' && (
           <div className="grid font-medium grid-cols-subgrid col-span-5 gap-2 py-2 pb-2 text-neutral-500 dark:text-neutral-400 border-b-2 border-neutral-300 dark:border-neutral-700">
-            <span>Instrument</span>
-            <span>Focus</span>
-            <span>Rating</span>
-            <span>Duration</span>
+            <span className="px-4">Instrument</span>
+            <span className="px-4">Focus</span>
+            <span className="">Rating</span>
+            <span className="px-4">Duration</span>
             {mode === 'edit' && <span className="min-w-[40px]" />}
           </div>
         )}

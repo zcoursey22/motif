@@ -146,7 +146,7 @@ export default function CaptureForm() {
         )}
         <div className="flex justify-between items-end pointer-events-none">
           <span
-            className={`text-sm font-mono whitespace-pre ${
+            className={`text-sm font-mono pl-2 ${
               isRawTextAreaLocked ? 'hidden' : ''
             } ${trimmedLength > 500 ? 'text-red-500 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'}`}
           >
