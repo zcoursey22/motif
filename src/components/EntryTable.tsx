@@ -34,7 +34,7 @@ export function EntryTable({
   return (
     <>
       <div
-        className={`grid grid-cols-[minmax(0,2fr)_minmax(0,5fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-2
+        className={`grid grid-cols-[minmax(0,4fr)_minmax(0,8fr)_minmax(0,2fr)_minmax(0,2fr)_auto] gap-2
         ${mode === 'edit' ? 'pb-2 mb-2 border-b-2 border-neutral-300 dark:border-neutral-700' : ''}`}
       >
         {mode === 'edit' && (

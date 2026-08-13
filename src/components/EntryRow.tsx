@@ -50,7 +50,8 @@ export function EntryRow({
             instrument: e.target.value.trim() || null,
           });
         }}
-        className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
+        className={`placeholder-neutral-300 dark:placeholder-neutral-600
+          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
                       read-only:field-busy read-only:cursor-default
                       ${
                         isInvalid
@@ -83,13 +84,15 @@ export function EntryRow({
         type="number"
         min={1}
         value={durationMin ?? ''}
+        placeholder="min"
         onChange={e => {
           if (isBusy || mode === 'read') return;
           const n = e.target.value === '' ? null : Number(e.target.value);
           onUpdate?.(id, { durationMin: Number.isFinite(n) ? n : null });
         }}
         disabled={isBusy || mode === 'read'}
-        className={`bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
+        className={`placeholder-neutral-300 dark:placeholder-neutral-600
+          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:field-busy`}
         aria-label="Duration"
       />

@@ -74,8 +74,8 @@ export function StarRating({
       : state === 'gaining'
         ? 'fill-yellow-600 text-yellow-600 dark:fill-yellow-300 dark:text-yellow-300'
         : state === 'losing'
-          ? 'fill-none text-yellow-600 dark:fill-none dark:text-yellow-300'
-          : 'fill-none text-neutral-300 dark:fill-none dark:text-neutral-700';
+          ? 'fill-transparent text-yellow-600 dark:fill-transparent dark:text-yellow-300'
+          : 'fill-neutral-300 text-neutral-300 dark:fill-neutral-700 dark:text-neutral-700';
 
   return (
     <div
@@ -104,7 +104,7 @@ export function StarRating({
             className="cursor-pointer rounded-sm px-0.25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             <Star
-              className={`${starClass(classify(star))}`}
+              className={`transition-colors ${starClass(classify(star))}`}
               size={18}
               strokeWidth={2.5}
             />

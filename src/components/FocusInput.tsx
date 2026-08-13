@@ -91,9 +91,11 @@ export function FocusInput({
         type="text"
         ref={inputRef}
         value={draft}
+        placeholder={!!focus.length ? undefined : 'Enter multiple...'}
         onChange={e => setDraft(e.target.value)}
+        onBlur={() => createTag()}
         onKeyDown={handleInputKeyDown}
-        className={`shrink-0 flex-1 min-w-[60px] bg-transparent py-0.5 focus:outline-none placeholder-neutral-400 ${
+        className={`shrink-0 flex-1 min-w-[60px] bg-transparent py-0.5 focus:outline-none placeholder-neutral-300 dark:placeholder-neutral-600 ${
           disabled ? 'cursor-default' : ''
         }`}
         readOnly={disabled}
