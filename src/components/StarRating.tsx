@@ -15,20 +15,48 @@ interface StarRatingProps {
   label?: string;
 }
 
+const starClass = (state: StarState) =>
+  state === 'filled'
+    ? 'fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400'
+    : state === 'gaining'
+      ? 'fill-yellow-600 text-yellow-600 dark:fill-yellow-300 dark:text-yellow-300'
+      : state === 'losing'
+        ? 'fill-transparent text-yellow-600 dark:fill-transparent dark:text-yellow-300'
+        : 'fill-neutral-300 text-neutral-300 dark:fill-neutral-700 dark:text-neutral-700';
+
 export function StarRating({
   value,
   onChange,
-  disabled = false,
+  disabled,
   label = 'Rating',
 }: StarRatingProps) {
-  const [hover, setHover] = useState(0); // 0 = none, else 1..n
+  const [hover, setHover] = useState(0);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const current = value ? ORDER.indexOf(value) + 1 : 0; // 0 = unrated
-  const shown = hover || current;
+  const current = value ? ORDER.indexOf(value) + 1 : 0;
+
+  if (!onChange) {
+    return (
+      <div
+        role="img"
+        aria-label={value ? `${label}: ${value}` : `${label}: none`}
+        className="flex items-stretch justify-center gap-0.5"
+      >
+        {ORDER.map((rating, i) => (
+          <Star
+            key={rating}
+            aria-hidden
+            className={`${starClass(i + 1 <= current ? 'filled' : 'empty')}`}
+            size={18}
+            strokeWidth={2.5}
+          />
+        ))}
+      </div>
+    );
+  }
 
   const commit = (pos: number) => {
-    onChange?.(pos === 0 ? null : ORDER[pos - 1]);
+    onChange(pos === 0 ? null : ORDER[pos - 1]);
     refs.current[Math.max(0, pos - 1)]?.focus();
   };
 
@@ -52,9 +80,8 @@ export function StarRating({
   };
 
   const classify = (star: number): StarState => {
-    if (hover > 0 && hover === current) {
+    if (hover > 0 && hover === current)
       return star <= current ? 'losing' : 'empty';
-    }
     if (hover > current) {
       if (star <= current) return 'filled';
       if (star <= hover) return 'gaining';
@@ -68,25 +95,15 @@ export function StarRating({
     return star <= current ? 'filled' : 'empty';
   };
 
-  const starClass = (state: StarState) =>
-    state === 'filled'
-      ? 'fill-yellow-500 text-yellow-500 dark:fill-yellow-400 dark:text-yellow-400'
-      : state === 'gaining'
-        ? 'fill-yellow-600 text-yellow-600 dark:fill-yellow-300 dark:text-yellow-300'
-        : state === 'losing'
-          ? 'fill-transparent text-yellow-600 dark:fill-transparent dark:text-yellow-300'
-          : 'fill-neutral-300 text-neutral-300 dark:fill-neutral-700 dark:text-neutral-700';
-
   return (
     <div
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={`flex items-stretch justify-center ${disabled ? 'field-busy pointer-events-none' : ''}`}
+      className={`flex items-center justify-center gap-0.5 ${disabled ? 'pointer-events-none' : ''}`}
     >
       {ORDER.map((rating, i) => {
         const star = i + 1;
-
         return (
           <button
             key={rating}
@@ -101,7 +118,7 @@ export function StarRating({
             onClick={() => commit(star === current ? 0 : star)}
             onMouseEnter={() => setHover(star)}
             onMouseLeave={() => setHover(0)}
-            className="cursor-pointer rounded-sm px-0.25 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="cursor-pointer rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
             <Star
               className={`transition-colors ${starClass(classify(star))}`}

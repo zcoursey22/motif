@@ -84,7 +84,7 @@ export default function SessionCard({ session }: Props) {
           mode === 'edit' ? '' : 'pb-2'
         }`}
       >
-        <div className="flex justify-between">
+        <div className={`flex justify-between pl-2`}>
           <span className="min-h-[40px] pt-2 font-medium">
             {getDateString()}
           </span>
@@ -133,7 +133,7 @@ export default function SessionCard({ session }: Props) {
             )}
           </div>
         </div>
-        <CollapsibleText text={rawText} spanClassName="py-2 italic" />
+        <CollapsibleText text={rawText} spanClassName="py-2 italic pl-2" />
       </div>
 
       <div

@@ -2,7 +2,6 @@
 
 import { EditableEntry } from '@/lib/schemas/session';
 import { FocusInput } from './FocusInput';
-import { SelfRating } from '@/lib/constants';
 import { IconButton } from './ui/Button';
 import { X } from 'lucide-react';
 import { useState } from 'react';
@@ -34,6 +33,21 @@ export function EntryRow({
 
   const { id, instrument, focus, selfRating, durationMin } = row;
 
+  if (mode === 'read') {
+    return (
+      <div className="grid grid-cols-subgrid col-span-5 gap-2 items-center text-neutral-600 dark:text-neutral-300 pr-2 pb-2 pl-2">
+        <span className="">{instrument || '-'}</span>
+        <span>
+          {focus?.length ? <FocusInput focus={focus} /> : <span>-</span>}
+        </span>
+        <StarRating value={selfRating} />
+        <span className="text-right">
+          {durationMin != null ? `${durationMin}m` : '-'}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`grid grid-cols-subgrid col-span-5 gap-2 items-stretch ${
@@ -45,7 +59,7 @@ export function EntryRow({
         type="text"
         value={instrument ?? ''}
         onChange={e => {
-          if (isBusy || mode === 'read') return;
+          if (isBusy) return;
           onUpdate?.(id, {
             instrument: e.target.value.trim() || null,
           });
@@ -58,8 +72,8 @@ export function EntryRow({
                           ? 'outline-red-500 dark:outline-red-400'
                           : 'outline-transparent focus:outline-transparent'
                       }`}
-        aria-disabled={isBusy || mode === 'read'}
-        readOnly={isBusy || mode === 'read'}
+        aria-disabled={isBusy}
+        readOnly={isBusy}
         aria-label="Instrument"
       />
       <FocusInput
@@ -70,27 +84,33 @@ export function EntryRow({
             focus: next,
           });
         }}
-        disabled={isBusy || mode === 'read'}
+        disabled={isBusy}
       />
-      <StarRating
-        value={selfRating}
-        disabled={mode === 'read' || isBusy}
-        onChange={e => {
-          if (isBusy || mode === 'read') return;
-          onUpdate?.(id, { selfRating: e });
-        }}
-      />
+      <div
+        className={`flex items-stretch justify-center bg-white dark:bg-black shadow-xs rounded-2xl px-4 py-2 ${
+          isBusy ? 'field-busy' : ''
+        }`}
+      >
+        <StarRating
+          value={selfRating}
+          disabled={isBusy}
+          onChange={e => {
+            if (isBusy) return;
+            onUpdate?.(id, { selfRating: e });
+          }}
+        />
+      </div>
       <input
         type="number"
         min={1}
         value={durationMin ?? ''}
         placeholder="min"
         onChange={e => {
-          if (isBusy || mode === 'read') return;
+          if (isBusy) return;
           const n = e.target.value === '' ? null : Number(e.target.value);
           onUpdate?.(id, { durationMin: Number.isFinite(n) ? n : null });
         }}
-        disabled={isBusy || mode === 'read'}
+        disabled={isBusy}
         className={`placeholder-neutral-300 dark:placeholder-neutral-600
           bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
                       read-only:field-busy`}
