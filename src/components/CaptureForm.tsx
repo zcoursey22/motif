@@ -60,7 +60,8 @@ export default function CaptureForm() {
     rawTextElement.current?.blur();
     parse(trimmed, {
       onSuccess: parsed => {
-        setRows(parsed.map(p => ({ ...p, id: crypto.randomUUID() })));
+        setRows(parsed.entries.map(p => ({ ...p, id: crypto.randomUUID() })));
+        setOccurredOn(parsed.occurredOn);
       },
       onError: () => rawTextElement.current?.focus(),
     });

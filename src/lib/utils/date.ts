@@ -6,3 +6,14 @@ export function parseLocalDate(s: string): Date {
   const [year, month, day] = s.split('-').map(Number);
   return new Date(year, month - 1, day);
 }
+
+const WEEKDAYS = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+] as const;
+export const getLocalWeekday = (d: Date): string => WEEKDAYS[d.getDay()];
