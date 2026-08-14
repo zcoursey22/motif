@@ -50,6 +50,7 @@ type ButtonProps = {
   icon?: LucideIcon;
   href?: string;
   iconClassName?: string;
+  isBusyUnstyled?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function BaseButton({
@@ -60,9 +61,11 @@ function BaseButton({
   className,
   children,
   iconClassName,
+  isBusyUnstyled,
   ...rest
 }: ButtonProps) {
-  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto aria-disabled:pointer-events-none aria-disabled:field-busy
+  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto aria-disabled:pointer-events-none
+  ${isBusyUnstyled ? '' : 'aria-disabled:field-busy'}
     ${
       variant === 'solid'
         ? `text-white ${SOLID_CLASSNAMES[color]}`

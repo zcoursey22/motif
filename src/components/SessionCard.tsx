@@ -6,10 +6,11 @@ import { getSessions } from '@/lib/actions/sessions';
 import { EntryTable } from './EntryTable';
 import { Button, IconButton } from './ui/Button';
 import { useEntryRows } from '@/hooks/useEntryRows';
-import { Edit, Trash2 } from 'lucide-react';
+import { CircleAlert, Edit, Trash2 } from 'lucide-react';
 import { parseLocalDate } from '@/lib/utils/date';
 import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
 import { CollapsibleText } from './ui/CollapsibleText';
+import { AppError, getErrorMessage } from '@/lib/utils/api';
 
 type Props = { session: Awaited<ReturnType<typeof getSessions>>[number] };
 
@@ -27,6 +28,7 @@ export default function SessionCard({ session }: Props) {
   const [mode, setMode] = useState<'read' | 'edit'>('read');
   const [validationAttempts, setValidationAttempts] = useState(0);
   const [isBusy, setIsBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleEditSave = () => {
     if (isBusy) return;
@@ -37,6 +39,7 @@ export default function SessionCard({ session }: Props) {
     }
 
     setIsBusy(true);
+    setError(null);
     updateSession(
       {
         id,
@@ -47,6 +50,10 @@ export default function SessionCard({ session }: Props) {
           setIsBusy(false);
           setMode('read');
         },
+        onError: e => {
+          setIsBusy(false);
+          setError(getErrorMessage((e as AppError).code));
+        },
       }
     );
   };
@@ -54,6 +61,7 @@ export default function SessionCard({ session }: Props) {
   const handleEditCancel = () => {
     if (isBusy) return;
 
+    setError(null);
     setOccurredOn(session.occurredOn);
     setRows(entries);
     setMode('read');
@@ -62,8 +70,17 @@ export default function SessionCard({ session }: Props) {
   const handleDelete = () => {
     if (isBusy) return;
 
+    setError(null);
     setIsBusy(true);
-    deleteSession({ id });
+    deleteSession(
+      { id },
+      {
+        onError: e => {
+          setIsBusy(false);
+          setError(getErrorMessage((e as AppError).code));
+        },
+      }
+    );
   };
 
   const getDateString = () => {
@@ -78,7 +95,10 @@ export default function SessionCard({ session }: Props) {
   };
 
   return (
-    <div className="flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm">
+    <div
+      className={`flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm
+      ${isBusy ? 'field-busy' : ''}`}
+    >
       <div
         className={`px-4 pt-4 gap-2 text-neutral-600 dark:text-neutral-300 flex flex-col ${
           mode === 'edit' ? '' : 'pb-2'
@@ -88,16 +108,29 @@ export default function SessionCard({ session }: Props) {
           <span className="min-h-[40px] pt-2 font-medium">
             {getDateString()}
           </span>
+          <div
+            className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2
+                ${error ? 'visible' : 'invisible'}`}
+          >
+            <CircleAlert />
+            <span className="text-neutral-600 dark:text-neutral-300">
+              {error || ''}
+            </span>
+          </div>
           <div className="flex gap-2">
             {mode === 'read' ? (
               <>
                 <IconButton
                   variant="ghost"
                   onClick={() => {
-                    if (!isBusy) setMode('edit');
+                    if (!isBusy) {
+                      setMode('edit');
+                      setError(null);
+                    }
                   }}
                   aria-disabled={isBusy}
                   aria-label="Edit session"
+                  isBusyUnstyled
                 >
                   <Edit />
                 </IconButton>
@@ -107,6 +140,7 @@ export default function SessionCard({ session }: Props) {
                   onClick={handleDelete}
                   aria-disabled={isBusy}
                   aria-label="Delete session"
+                  isBusyUnstyled
                 >
                   <Trash2 />
                 </IconButton>
@@ -133,6 +167,7 @@ export default function SessionCard({ session }: Props) {
             )}
           </div>
         </div>
+
         <CollapsibleText text={rawText} spanClassName="py-2 italic pl-2" />
       </div>
 

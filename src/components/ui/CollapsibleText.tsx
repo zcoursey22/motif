@@ -25,7 +25,7 @@ export function CollapsibleText({
     const hasNewline = text.includes('\n');
     const tooWide = el.scrollWidth > el.clientWidth + 1;
     setOverflows(hasNewline || tooWide);
-  }, [text, expanded]);
+  }, [text]);
 
   return (
     <div
