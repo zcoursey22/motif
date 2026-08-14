@@ -36,12 +36,12 @@ export function EntryRow({
   if (mode === 'read') {
     return (
       <div className="grid grid-cols-subgrid col-span-5 gap-2 items-center text-neutral-600 dark:text-neutral-300 pr-2 pb-2 pl-2">
-        <span className="">{instrument || '-'}</span>
+        <span className="font-medium">{instrument || '-'}</span>
         <span>
           {focus?.length ? <FocusInput focus={focus} /> : <span>-</span>}
         </span>
         <StarRating value={selfRating} />
-        <span className="text-right">
+        <span className="text-right font-medium">
           {durationMin != null ? `${durationMin}m` : '-'}
         </span>
       </div>
