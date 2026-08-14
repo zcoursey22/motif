@@ -1,17 +1,26 @@
 import { z } from 'zod';
-import { SelfRating } from '../constants';
+import { Instrument, SelfRating } from '../constants';
 
 export const EntryFields = z.object({
   id: z.string(),
   sessionId: z.string(),
-  instrument: z.string().min(1).nullable(),
+  instrument: z.enum(Instrument).nullable(),
   focus: z.array(z.string().min(1)).default([]),
   durationMin: z.number().int().positive().nullable(),
-  selfRating: z.enum(SelfRating).nullable(),
+  selfRating: z
+    .enum(SelfRating)
+    .nullable()
+    .describe(
+      `How the musician judged the entry, or null if they do not say.
+      poor = went badly or frustrated;
+      below = rough, more misses than hits;
+      above = pretty good but not great, more hits than misses;
+      strong = went well;`
+    ),
 });
 
 export const EntrySchema = EntryFields.refine(
-  (e: { instrument: string | null; focus: string[] }) =>
+  (e: { instrument: Instrument | null; focus: string[] }) =>
     e.instrument !== null || e.focus.length > 0,
   {
     message: 'Entry needs an instrument or at least one focus area',

@@ -94,8 +94,9 @@ export function EntryTable({
           >
             <CircleAlert />
             <span className="text-neutral-600 dark:text-neutral-300">
-              Each entry needs an <strong>instrument</strong> or{' '}
-              <strong>focus</strong>.
+              Each entry needs an{' '}
+              <span className="font-medium">instrument</span> or{' '}
+              <span className="font-medium">focus</span>.
             </span>
           </div>
           {onAdd && (

@@ -9,11 +9,16 @@ import {
   date,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { SelfRating } from '../constants';
+import { Instrument, SelfRating } from '../constants';
 
 export const selfRatingPgEnum = pgEnum(
   'self_rating',
   Object.values(SelfRating) as [SelfRating, ...SelfRating[]]
+);
+
+export const instrumentPgEnum = pgEnum(
+  'instrument',
+  Object.values(Instrument) as [Instrument, ...Instrument[]]
 );
 
 export const sessions = pgTable(
@@ -36,7 +41,7 @@ export const entries = pgTable(
     sessionId: uuid('session_id')
       .notNull()
       .references(() => sessions.id, { onDelete: 'cascade' }),
-    instrument: text('instrument'),
+    instrument: instrumentPgEnum('instrument'),
     focus: text('focus').array().notNull().default([]),
     durationMin: integer('duration_min'),
     selfRating: selfRatingPgEnum('self_rating'),

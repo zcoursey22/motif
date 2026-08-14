@@ -1,10 +1,91 @@
+export const SESSIONS_QUERY_KEY = 'sessions';
+
 export const SelfRating = {
   POOR: 'poor',
   BELOW: 'below',
   ABOVE: 'above',
   STRONG: 'strong',
 } as const;
-
 export type SelfRating = (typeof SelfRating)[keyof typeof SelfRating];
 
-export const SESSIONS_QUERY_KEY = 'sessions';
+export const Instrument = {
+  VOICE: 'voice',
+  // strings
+  GUITAR: 'guitar',
+  UKULELE: 'ukulele',
+  BANJO: 'banjo',
+  MANDOLIN: 'mandolin',
+  STEEL_GUITAR: 'steel_guitar',
+  UPRIGHT_BASS: 'upright_bass',
+  BASS_GUITAR: 'bass_guitar',
+  HARP: 'harp',
+  VIOLIN: 'violin',
+  VIOLA: 'viola',
+  CELLO: 'cello',
+  // woodwind
+  SAXOPHONE: 'saxophone',
+  CLARINET: 'clarinet',
+  FLUTE: 'flute',
+  OBOE: 'oboe',
+  BASSOON: 'bassoon',
+  RECORDER: 'recorder',
+  HARMONICA: 'harmonica',
+  OCARINA: 'ocarina',
+  WHISTLE: 'whistle',
+  // brass
+  TRUMPET: 'trumpet',
+  TROMBONE: 'trombone',
+  FRENCH_HORN: 'french_horn',
+  EUPHONIUM: 'euphonium',
+  TUBA: 'tuba',
+  // percussion
+  DRUMS: 'drums',
+  VIBRAPHONE: 'vibraphone',
+  PERCUSSION: 'percussion',
+  // keys
+  PIANO: 'piano',
+  ORGAN: 'organ',
+  KEYBOARD: 'keyboard',
+  KALIMBA: 'kalimba',
+  ACCORDION: 'accordion',
+  MELODICA: 'melodica',
+} as const;
+export type Instrument = (typeof Instrument)[keyof typeof Instrument];
+
+export const INSTRUMENT_LABELS: Record<Instrument, string> = {
+  voice: 'Voice',
+  guitar: 'Guitar',
+  ukulele: 'Ukulele',
+  banjo: 'Banjo',
+  mandolin: 'Mandolin',
+  steel_guitar: 'Steel guitar',
+  upright_bass: 'Upright bass',
+  bass_guitar: 'Bass guitar',
+  harp: 'Harp',
+  violin: 'Violin',
+  viola: 'Viola',
+  cello: 'Cello',
+  saxophone: 'Saxophone',
+  clarinet: 'Clarinet',
+  flute: 'Flute',
+  oboe: 'Oboe',
+  bassoon: 'Bassoon',
+  recorder: 'Recorder',
+  harmonica: 'Harmonica',
+  ocarina: 'Ocarina',
+  whistle: 'Whistle',
+  trumpet: 'Trumpet',
+  trombone: 'Trombone',
+  french_horn: 'French horn',
+  euphonium: 'Euphonium',
+  tuba: 'Tuba',
+  drums: 'Drums',
+  vibraphone: 'Vibraphone',
+  percussion: 'Percussion',
+  piano: 'Piano',
+  organ: 'Organ',
+  keyboard: 'Keyboard',
+  kalimba: 'Kalimba',
+  accordion: 'Accordion',
+  melodica: 'Melodica',
+};

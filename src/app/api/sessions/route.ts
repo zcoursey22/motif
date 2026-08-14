@@ -13,7 +13,10 @@ export async function POST(req: Request) {
   }
 
   const input = CreateSessionPayloadSchema.safeParse(body);
-  if (!input.success) return fail('bad_request');
+  if (!input.success) {
+    console.error('[sessions CREATE]', input.error);
+    return fail('bad_request');
+  }
 
   await new Promise(r => setTimeout(r, 1500));
   try {
@@ -30,11 +33,7 @@ export async function POST(req: Request) {
         .values(input.data.entries.map(e => ({ ...e, sessionId: created.id })));
       return created;
     });
-    const responses = [
-      NextResponse.json({ session }, { status: 201 }),
-      fail('internal_error'),
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
+    return NextResponse.json({ session }, { status: 201 });
   } catch (e) {
     console.error('[sessions CREATE]', e);
     return fail('internal_error');
