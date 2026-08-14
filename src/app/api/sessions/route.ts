@@ -3,6 +3,7 @@ import { entries, sessions } from '@/lib/db/schema';
 import { CreateSessionPayloadSchema } from '@/lib/schemas/session';
 import { fail } from '@/lib/utils/api';
 import { NextResponse } from 'next/server';
+import { uuidv7 } from 'uuidv7';
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -28,9 +29,13 @@ export async function POST(req: Request) {
           occurredOn: input.data.occurredOn,
         })
         .returning();
-      await tx
-        .insert(entries)
-        .values(input.data.entries.map(e => ({ ...e, sessionId: created.id })));
+      await tx.insert(entries).values(
+        input.data.entries.map(e => ({
+          ...e,
+          sessionId: created.id,
+          id: uuidv7(),
+        }))
+      );
       return created;
     });
     return NextResponse.json({ session }, { status: 201 });
