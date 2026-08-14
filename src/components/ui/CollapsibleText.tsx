@@ -17,13 +17,15 @@ export function CollapsibleText({
   const [overflows, setOverflows] = useState(false);
   const textRef = useRef<HTMLSpanElement>(null);
 
+  const firstLine = text.split('\n')[0];
+
   useLayoutEffect(() => {
     const el = textRef.current;
     if (!el) return;
     const hasNewline = text.includes('\n');
     const tooWide = el.scrollWidth > el.clientWidth + 1;
     setOverflows(hasNewline || tooWide);
-  }, [text]);
+  }, [text, expanded]);
 
   return (
     <div
@@ -32,10 +34,10 @@ export function CollapsibleText({
       <span
         ref={textRef}
         className={`grow block overflow-hidden pr-4 ${
-          expanded ? 'whitespace-pre-wrap' : 'whitespace-pre text-ellipsis'
+          expanded ? 'whitespace-pre-wrap' : 'whitespace-nowrap text-ellipsis'
         } ${spanClassName ?? ''}`}
       >
-        {text}
+        {expanded ? text : firstLine}
       </span>
       {overflows && (
         <IconButton

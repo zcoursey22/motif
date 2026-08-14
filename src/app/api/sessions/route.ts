@@ -19,7 +19,6 @@ export async function POST(req: Request) {
     return fail('bad_request');
   }
 
-  await new Promise(r => setTimeout(r, 1500));
   try {
     const session = await db.transaction(async tx => {
       const [created] = await tx
