@@ -1,12 +1,29 @@
 import { z } from 'zod';
-import { Instrument, SelfRating } from '../constants';
+import { Instrument, Focus, SelfRating } from '../constants';
 
 export const EntryFields = z.object({
   id: z.string(),
   sessionId: z.string(),
-  instrument: z.enum(Instrument).nullable(),
-  focus: z.array(z.string().min(1)).default([]),
-  durationMin: z.number().int().positive().nullable(),
+  instrument: z
+    .enum(Instrument)
+    .nullable()
+    .describe(
+      `The instrument practiced, or null. Use null when the note names no instrument or names one not in the list. Map alternate names to the closest value (fiddle => violin, acoustic/electric guitar => guitar, string bass/double bass => upright_bass). For an ambiguous "bass" with no further context, default to upright_bass. Use bass_guitar only when the note names it or gives a concrete guitar/electric cue (amp, pickups, picking, fx, pedals, "electric," "guitar," "P-bass," etc.) or a non-classical or jazz style is specified and it seems very likely a bass guitar would be used rather than an upright bass. Similar goes for any other instruments that can be ambiguous.`
+    ),
+  focus: z
+    .array(z.enum(Focus))
+    .default([])
+    .describe(
+      `Categories of what was practiced. Choose only from the allowed values; map specific work to the closest category (a Bach etude => repertoire; long tones => tone; ii-V drills => harmony). Return multiple when a session covers several. Return an empty array when nothing fits rather than forcing a poor match. Do not use a category as a stand-in for the musical style.`
+    ),
+  durationMin: z
+    .number()
+    .int()
+    .positive()
+    .nullable()
+    .describe(
+      `Practice time in whole minutes, or null. Convert stated durations to minutes ("half an hour" => 30, "an hour and a half" => 90). Use null when no time is given; never estimate from the amount of activity described or phrases like "a while".`
+    ),
   selfRating: z
     .enum(SelfRating)
     .nullable()
@@ -20,7 +37,7 @@ export const EntryFields = z.object({
 });
 
 export const EntrySchema = EntryFields.refine(
-  (e: { instrument: Instrument | null; focus: string[] }) =>
+  (e: { instrument: Instrument | null; focus: Focus[] }) =>
     e.instrument !== null || e.focus.length > 0,
   {
     message: 'Entry needs an instrument or at least one focus area',

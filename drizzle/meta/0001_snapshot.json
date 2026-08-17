@@ -1,6 +1,6 @@
 {
-  "id": "0deaa142-c190-4d53-8b12-a0364c87f503",
-  "prevId": "87110cfe-6016-45e1-aca6-1a881016a785",
+  "id": "029fd844-4abe-4a63-bc77-0a5f8cf37af7",
+  "prevId": "f1a2ca31-7edf-4c6e-afbf-2a9bb7270d0d",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -23,13 +23,15 @@
         },
         "instrument": {
           "name": "instrument",
-          "type": "text",
+          "type": "instrument",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
         "focus": {
           "name": "focus",
-          "type": "text[]",
+          "type": "focus[]",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'{}'"
@@ -99,8 +101,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "occurred_at": {
-          "name": "occurred_at",
+        "occurred_on": {
+          "name": "occurred_on",
           "type": "date",
           "primaryKey": false,
           "notNull": true
@@ -114,11 +116,11 @@
         }
       },
       "indexes": {
-        "sessions_occurred_at_idx": {
-          "name": "sessions_occurred_at_idx",
+        "sessions_occurred_on_idx": {
+          "name": "sessions_occurred_on_idx",
           "columns": [
             {
-              "expression": "occurred_at",
+              "expression": "occurred_on",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -139,6 +141,102 @@
     }
   },
   "enums": {
+    "public.focus": {
+      "name": "focus",
+      "schema": "public",
+      "values": [
+        "warmup",
+        "technique",
+        "scales",
+        "arpeggios",
+        "articulation",
+        "ornaments",
+        "phrasing",
+        "picking",
+        "bending",
+        "tone",
+        "intonation",
+        "vibrato",
+        "dynamics",
+        "rhythm",
+        "timing",
+        "groove",
+        "strumming",
+        "comping",
+        "voicings",
+        "chords",
+        "theory",
+        "improvisation",
+        "licks",
+        "riffs",
+        "transcription",
+        "sight_reading",
+        "aural",
+        "composition",
+        "songwriting",
+        "arranging",
+        "recording",
+        "repertoire",
+        "performance",
+        "ensemble",
+        "jazz",
+        "classical",
+        "blues",
+        "rock",
+        "pop",
+        "folk",
+        "latin",
+        "funk",
+        "rb_soul",
+        "country",
+        "world",
+        "electronic",
+        "metal",
+        "reggae",
+        "theater"
+      ]
+    },
+    "public.instrument": {
+      "name": "instrument",
+      "schema": "public",
+      "values": [
+        "voice",
+        "guitar",
+        "bass_guitar",
+        "ukulele",
+        "banjo",
+        "mandolin",
+        "steel_guitar",
+        "violin",
+        "viola",
+        "cello",
+        "upright_bass",
+        "harp",
+        "saxophone",
+        "clarinet",
+        "flute",
+        "oboe",
+        "bassoon",
+        "recorder",
+        "harmonica",
+        "ocarina",
+        "whistle",
+        "trumpet",
+        "trombone",
+        "french_horn",
+        "euphonium",
+        "tuba",
+        "piano",
+        "organ",
+        "keyboard",
+        "accordion",
+        "melodica",
+        "drums",
+        "vibraphone",
+        "kalimba",
+        "percussion"
+      ]
+    },
     "public.self_rating": {
       "name": "self_rating",
       "schema": "public",

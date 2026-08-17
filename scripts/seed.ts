@@ -19,13 +19,13 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'piano',
-        focus: ['jazz', 'voicings', '251'],
+        focus: ['comping', 'voicings', 'jazz'],
         durationMin: 40,
         selfRating: SelfRating.ABOVE,
       },
       {
         instrument: 'piano',
-        focus: ['jazz', 'changes'],
+        focus: ['comping', 'repertoire', 'jazz'],
         durationMin: 25,
         selfRating: null,
       },
@@ -39,13 +39,13 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'guitar',
-        focus: ['jazz', 'comping', 'rhythm'],
+        focus: ['comping', 'rhythm', 'jazz'],
         durationMin: null,
         selfRating: SelfRating.STRONG,
       },
       {
         instrument: 'guitar',
-        focus: ['jazz', 'lead', 'head'],
+        focus: ['repertoire', 'improvisation', 'jazz'],
         durationMin: null,
         selfRating: null,
       },
@@ -59,7 +59,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'guitar',
-        focus: ['classical', 'scales'],
+        focus: ['scales', 'technique', 'classical'],
         durationMin: 11,
         selfRating: SelfRating.ABOVE,
       },
@@ -73,13 +73,13 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'trumpet',
-        focus: ['long tones', 'trills'],
+        focus: ['tone', 'technique'],
         durationMin: 10,
         selfRating: null,
       },
       {
         instrument: 'trombone',
-        focus: ['scales'],
+        focus: ['scales', 'tone', 'intonation'],
         durationMin: null,
         selfRating: SelfRating.BELOW,
       },
@@ -93,7 +93,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'trombone',
-        focus: ['scales', 'intonation'],
+        focus: ['tone', 'intonation'],
         durationMin: 20,
         selfRating: SelfRating.BELOW,
       },
@@ -113,13 +113,13 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'piano',
-        focus: ['jazz', 'voicings', '251'],
+        focus: ['comping', 'voicings'],
         durationMin: 30,
         selfRating: SelfRating.BELOW,
       },
       {
         instrument: 'guitar',
-        focus: ['jazz', 'comping'],
+        focus: ['comping', 'repertoire', 'jazz'],
         durationMin: 20,
         selfRating: SelfRating.STRONG,
       },
@@ -133,7 +133,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'violin',
-        focus: ['intonation'],
+        focus: [],
         durationMin: 15,
         selfRating: SelfRating.BELOW,
       },
@@ -147,13 +147,13 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'trumpet',
-        focus: ['long tones', 'breath support'],
+        focus: ['tone'],
         durationMin: 15,
         selfRating: SelfRating.ABOVE,
       },
       {
         instrument: 'trumpet',
-        focus: ['trills'],
+        focus: ['technique'],
         durationMin: 10,
         selfRating: null,
       },
@@ -167,7 +167,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: null,
-        focus: ['theory', 'harmony', 'modal interchange'],
+        focus: ['theory', 'jazz'],
         durationMin: 25,
         selfRating: SelfRating.STRONG,
       },
@@ -181,7 +181,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: 'trombone',
-        focus: ['scales', 'intonation'],
+        focus: ['tone', 'intonation'],
         durationMin: 25,
         selfRating: SelfRating.ABOVE,
       },
@@ -195,7 +195,7 @@ const seedData: SeedSession[] = [
     entries: [
       {
         instrument: null,
-        focus: ['theory', 'harmony', 'jazz'],
+        focus: ['theory', 'jazz'],
         durationMin: 30,
         selfRating: SelfRating.ABOVE,
       },

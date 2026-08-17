@@ -1,0 +1,1 @@
+ALTER TABLE "entries" ALTER COLUMN "focus" SET NOT NULL;

@@ -1,12 +1,16 @@
 'use client';
 
 import { EditableEntry } from '@/lib/schemas/session';
-import { FocusInput } from './FocusInput';
+import { FocusMultiSelect } from './FocusMultiSelect';
 import { IconButton } from './ui/Button';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { StarRating } from './StarRating';
-import { Instrument, INSTRUMENT_LABELS } from '@/lib/constants';
+import {
+  Instrument,
+  INSTRUMENT_GROUPS,
+  INSTRUMENT_LABELS,
+} from '@/lib/constants';
 
 type EntryRowProps = {
   row: EditableEntry;
@@ -41,7 +45,7 @@ export function EntryRow({
           {instrument ? INSTRUMENT_LABELS[instrument] : '-'}
         </span>
         <span>
-          {focus?.length ? <FocusInput focus={focus} /> : <span>-</span>}
+          {focus?.length ? <FocusMultiSelect focus={focus} /> : <span>-</span>}
         </span>
         <StarRating value={selfRating} />
         <span className="text-right font-medium">
@@ -77,16 +81,19 @@ export function EntryRow({
         aria-disabled={isBusy}
         aria-label="Instrument"
       >
-        <option value={''}></option>
-        {Object.values(Instrument)
-          .sort()
-          .map(instrument => (
-            <option key={instrument} value={instrument}>
-              {INSTRUMENT_LABELS[instrument]}
-            </option>
-          ))}
+        <option value=""></option>
+        <option value="voice">Voice</option>
+        {INSTRUMENT_GROUPS.map(g => (
+          <optgroup key={g.label} label={g.label}>
+            {g.items.map(v => (
+              <option key={v} value={v}>
+                {INSTRUMENT_LABELS[v]}
+              </option>
+            ))}
+          </optgroup>
+        ))}
       </select>
-      <FocusInput
+      <FocusMultiSelect
         focus={focus}
         error={isInvalid}
         onChange={next => {

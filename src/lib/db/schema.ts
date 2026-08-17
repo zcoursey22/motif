@@ -9,7 +9,7 @@ import {
   date,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { Instrument, SelfRating } from '../constants';
+import { Focus, Instrument, SelfRating } from '../constants';
 
 export const selfRatingPgEnum = pgEnum(
   'self_rating',
@@ -19,6 +19,11 @@ export const selfRatingPgEnum = pgEnum(
 export const instrumentPgEnum = pgEnum(
   'instrument',
   Object.values(Instrument) as [Instrument, ...Instrument[]]
+);
+
+export const focusPgEnum = pgEnum(
+  'focus',
+  Object.values(Focus) as [Focus, ...Focus[]]
 );
 
 export const sessions = pgTable(
@@ -42,7 +47,7 @@ export const entries = pgTable(
       .notNull()
       .references(() => sessions.id, { onDelete: 'cascade' }),
     instrument: instrumentPgEnum('instrument'),
-    focus: text('focus').array().notNull().default([]),
+    focus: focusPgEnum('focus').array().notNull().default([]),
     durationMin: integer('duration_min'),
     selfRating: selfRatingPgEnum('self_rating'),
   },
