@@ -12,7 +12,7 @@ import { useParse } from '../hooks/useParse';
 import { isEntryValid } from '@/lib/schemas/session';
 import { Button } from './ui/Button';
 import { toLocalDateString } from '@/lib/utils/date';
-import { getErrorMessage } from '@/lib/utils/api';
+import { AppError, getErrorMessage } from '@/lib/utils/api';
 import { useCreateSession } from '../hooks/useSessions';
 import { useRouter } from 'next/navigation';
 import { EntryTable } from './EntryTable';
@@ -180,7 +180,7 @@ export default function CaptureForm() {
         <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2">
           <CircleAlert />
           <span className="text-neutral-600 dark:text-neutral-300">
-            {getErrorMessage(parseError.message)}
+            {getErrorMessage((parseError as AppError).code)}
           </span>
         </div>
       )}
@@ -193,7 +193,7 @@ export default function CaptureForm() {
             >
               <CircleAlert />
               <span className="text-neutral-600 dark:text-neutral-300">
-                {getErrorMessage(createError?.message || '')}
+                {getErrorMessage((createError as AppError).code)}
               </span>
             </div>
           )}

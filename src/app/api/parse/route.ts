@@ -4,11 +4,13 @@ import {
   ParseResponse,
   ParseResponseSchema,
 } from '@/lib/schemas/parse';
-import { fail } from '@/lib/utils/api';
+import { fail, getClientIp } from '@/lib/utils/api';
 import { generateText, Output } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { getLocalWeekday, parseLocalDate } from '@/lib/utils/date';
 import { isEntryValid } from '@/lib/schemas/session';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const SYSTEM_PROMPT = `You convert a musician's freeform practice note into structured data.
 
@@ -36,7 +38,7 @@ If multiple dates can be inferred, just use the more recent one.
 entries — one entry per distinct practice activity. A new activity begins when the instrument changes or the focus clearly shifts, for example moving from scales to repertoire. One sentence can hold several activities, and one activity can span several sentences. Do not merge unrelated work into one entry, and do not split one continuous activity into several.
 
 Each entry field:
-- instrument: the instrument used, or null if the note does not name one. Do not infer it from the style of music.
+- instrument: the instrument used, or null if the note does not name one. Generally try not infer it from the style of music unless its required to try to resolve ambiuguity.
 - focus: short lowercase tags for what was worked on, such as scales, voicings, transcription. Prefer the musician's own words when they map cleanly to a tag. One tag per distinct concept. Empty array if none is given.
 - durationMin: whole minutes, only when stated or directly implied. Null otherwise. Never estimate.
 - selfRating: only when the musician says how it went. Map their sentiment to the rating scale. Null if they do not say.
@@ -44,6 +46,15 @@ Each entry field:
 If the note contains no practice activity, return entries as an empty array. Do not create an entry for input with no musical content.
 
 Use only what is in the note. When something is not stated, use null, or an empty array for focus. Never fill a field to avoid leaving it empty. Return every activity in the order it appears.`;
+
+const isProd = process.env.VERCEL_ENV === 'prod';
+
+const parseRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(isProd ? 3 : 10, '1 m'),
+  prefix: 'parse',
+  analytics: true,
+});
 
 const parse = async (
   rawText: string,
@@ -58,7 +69,6 @@ const parse = async (
               \n${rawText}`,
     temperature: 0,
   });
-  console.log(output);
   if (!output) throw new Error('LLM parse produced no output');
   return output;
 };
@@ -73,6 +83,9 @@ export async function POST(req: Request) {
 
   const input = ParseRequestSchema.safeParse(body);
   if (!input.success) return fail('bad_request');
+
+  const { success } = await parseRateLimit.limit(getClientIp(req));
+  if (!success) return fail('rate_limit');
 
   try {
     const { entries, occurredOn } = await parse(

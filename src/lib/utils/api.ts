@@ -38,3 +38,9 @@ const ERROR_STATUS: Record<AppErrorCode, number> = {
 
 export const getErrorMessage = (code: string) =>
   ERROR_MESSAGE[code as AppErrorCode] ?? 'Something went wrong.';
+
+export function getClientIp(req: Request): string {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous'
+  );
+}

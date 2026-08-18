@@ -14,7 +14,7 @@ export const EntryFields = z.object({
     .array(z.enum(Focus))
     .default([])
     .describe(
-      `Categories of what was practiced. Choose only from the allowed values; map specific work to the closest category (a Bach etude => repertoire; long tones => tone; ii-V drills => harmony). Return multiple when a session covers several. Return an empty array when nothing fits rather than forcing a poor match. Do not use a category as a stand-in for the musical style.`
+      `Categories of what was practiced. Choose only from the allowed values; map specific work to the closest category (a classical piece or jazz tune or pop song => repertoire; Classical etude/exercises => technique or warmup or specifically the focus of the study (scales, arpeggios, etc.); long tones => tone; ii-V drills => harmony and likely jazz). Return multiple when a session covers several. Return an empty array when nothing fits rather than forcing a poor match. If you can cleanly and confidently infer the style/genre of music and the focus exists for it, you can add it as a focus.`
     ),
   durationMin: z
     .number()
