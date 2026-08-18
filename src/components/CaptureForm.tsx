@@ -89,7 +89,7 @@ export default function CaptureForm() {
       {
         rawText,
         occurredOn,
-        entries: rows.map(({ id, ...entry }) => entry),
+        entries: rows.map(({ id: _id, ...entry }) => entry),
       },
       {
         onSuccess: () => {

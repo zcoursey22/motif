@@ -1,9 +1,7 @@
-export default {
-  '*.{ts,tsx}': [
-    () => 'tsc --noEmit', // Type checking
-    'eslint --fix',
-    'prettier --write',
-  ],
+const lintstagedrc = {
+  '*.{ts,tsx}': [() => 'tsc --noEmit', 'eslint --fix', 'prettier --write'],
   '*.{js,jsx}': ['eslint --fix', 'prettier --write'],
   '*.{json,md,css}': ['prettier --write'],
 };
+
+export default lintstagedrc;
