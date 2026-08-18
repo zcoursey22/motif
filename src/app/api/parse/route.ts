@@ -47,11 +47,12 @@ If the note contains no practice activity, return entries as an empty array. Do 
 
 Use only what is in the note. When something is not stated, use null, or an empty array for focus. Never fill a field to avoid leaving it empty. Return every activity in the order it appears.`;
 
-const isProd = process.env.VERCEL_ENV === 'prod';
-
 const parseRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(isProd ? 3 : 10, '1 m'),
+  limiter: Ratelimit.slidingWindow(
+    process.env.VERCEL_ENV === 'production' ? 3 : 10,
+    '1 m'
+  ),
   prefix: 'parse',
   analytics: true,
 });
