@@ -17,6 +17,7 @@ export const AppErrorCode = {
   INTERNAL_ERROR: 'internal_error',
   TIMEOUT: 'timeout',
   RATE_LIMIT: 'rate_limit',
+  DEMO: 'demo_readonly',
 } as const;
 export type AppErrorCode = (typeof AppErrorCode)[keyof typeof AppErrorCode];
 
@@ -26,6 +27,7 @@ const ERROR_MESSAGE: Record<AppErrorCode, string> = {
   internal_error: 'Something went wrong.',
   timeout: 'Request timed out.',
   rate_limit: 'Too many attempts. Try again later.',
+  demo_readonly: 'Demo mode is read only.',
 };
 
 const ERROR_STATUS: Record<AppErrorCode, number> = {
@@ -34,6 +36,7 @@ const ERROR_STATUS: Record<AppErrorCode, number> = {
   internal_error: 500,
   timeout: 504,
   rate_limit: 429,
+  demo_readonly: 403,
 };
 
 export const getErrorMessage = (code: string) =>

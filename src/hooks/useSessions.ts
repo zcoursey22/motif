@@ -6,10 +6,16 @@ import {
   CreateSessionPayload,
   UpdateSessionPayload,
 } from '@/lib/schemas/session';
+import { CLIENT_DEMO_MODE, DEMO_TIMEOUT_DURATION, demoToast } from '@/lib/demo';
 import { AppError } from '@/lib/utils/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 async function createSession(payload: CreateSessionPayload) {
+  if (CLIENT_DEMO_MODE) {
+    await new Promise(r => setTimeout(r, DEMO_TIMEOUT_DURATION));
+    demoToast();
+    return {};
+  }
   const res = await fetch('/api/sessions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -29,6 +35,11 @@ async function updateSession({
   id: string;
   payload: UpdateSessionPayload;
 }) {
+  if (CLIENT_DEMO_MODE) {
+    await new Promise(r => setTimeout(r, DEMO_TIMEOUT_DURATION));
+    demoToast();
+    return {};
+  }
   const res = await fetch(`/api/sessions/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -42,6 +53,11 @@ async function updateSession({
 }
 
 async function deleteSession({ id }: { id: string }) {
+  if (CLIENT_DEMO_MODE) {
+    await new Promise(r => setTimeout(r, DEMO_TIMEOUT_DURATION));
+    demoToast();
+    return {};
+  }
   const res = await fetch(`/api/sessions/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },

@@ -7,6 +7,7 @@ import NextLink from 'next/link';
 import { Providers } from './providers';
 import { Nav } from './nav';
 import { ExternalLink } from '../components/ui/ExternalLink';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,6 +37,23 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col min-h-screen">
         <Providers>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: 'var(--toast-bg)',
+                color: 'var(--toast-fg)',
+                boxShadow: 'var(--shadow-md)',
+                border: '2px solid var(--toast-border-color)',
+                fontFamily:
+                  'var(--font-geist-sans), Arial, Helvetica, sans-serif',
+                fontSize: 'var(--text-md)',
+                padding: 'calc(var(--spacing) * 4) calc(var(--spacing) * 6)',
+                pointerEvents: 'none',
+                cursor: 'default',
+              },
+            }}
+          />
           <header className="sticky top-0 z-10 flex items-center justify-between px-8 py-2 bg-neutral-200 dark:bg-neutral-800 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
             <NextLink href="/" className="flex gap-2 p-2">
               <Activity

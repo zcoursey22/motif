@@ -11,6 +11,7 @@ import { parseLocalDate } from '@/lib/utils/date';
 import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
 import { CollapsibleText } from './ui/CollapsibleText';
 import { AppError, getErrorMessage } from '@/lib/utils/api';
+import { CLIENT_DEMO_MODE } from '@/lib/demo';
 
 type Props = { session: Awaited<ReturnType<typeof getSessions>>[number] };
 
@@ -75,6 +76,9 @@ export default function SessionCard({ session }: Props) {
     deleteSession(
       { id },
       {
+        onSuccess: () => {
+          if (CLIENT_DEMO_MODE) setIsBusy(false);
+        },
         onError: e => {
           setIsBusy(false);
           setError(getErrorMessage((e as AppError).code));

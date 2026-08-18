@@ -1,11 +1,14 @@
 import { db } from '@/lib/db/client';
 import { entries, sessions } from '@/lib/db/schema';
+import { DEMO_MODE } from '@/lib/demo';
 import { CreateSessionPayloadSchema } from '@/lib/schemas/session';
 import { fail } from '@/lib/utils/api';
 import { NextResponse } from 'next/server';
 import { uuidv7 } from 'uuidv7';
 
 export async function POST(req: Request) {
+  if (DEMO_MODE) return fail('demo_readonly');
+
   let body: unknown;
   try {
     body = await req.json();

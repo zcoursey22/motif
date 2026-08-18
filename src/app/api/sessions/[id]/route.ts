@@ -1,4 +1,5 @@
 // app/api/sessions/[id]/route.ts
+import { DEMO_MODE } from '@/lib/demo';
 import { db } from '@/lib/db/client';
 import { entries, sessions } from '@/lib/db/schema';
 import { UpdateSessionPayloadSchema } from '@/lib/schemas/session';
@@ -10,6 +11,8 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (DEMO_MODE) return fail('demo_readonly');
+
   const { id } = await params;
 
   let body: unknown;
@@ -54,6 +57,8 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (DEMO_MODE) return fail('demo_readonly');
+
   const { id } = await params;
 
   try {

@@ -5,6 +5,9 @@
   --foreground: var(--color-black);
   --scrollbar-thumb: var(--color-neutral-400);
   scrollbar-gutter: stable;
+  --toast-bg: var(--color-neutral-100);
+  --toast-fg: var(--color-neutral-600);
+  --toast-border-color: var(--color-neutral-300);
 }
 
 @theme {
@@ -19,6 +22,9 @@
     --background: var(--color-neutral-800);
     --foreground: var(--color-white);
     --scrollbar-thumb: var(--color-neutral-500);
+    --toast-bg: var(--color-neutral-900);
+    --toast-fg: var(--color-neutral-300);
+    --toast-border-color: var(--color-neutral-700);
   }
 }
 
@@ -86,4 +92,12 @@ select,
     opacity: 0.75;
     filter: contrast(0.9) brightness(0.5);
   }
+}
+
+[data-sonner-toast] [data-icon] {
+  padding-right: calc(var(--spacing) * 5.5);
+}
+
+[data-sonner-toast] [data-title] {
+  font-weight: 400 !important;
 }
