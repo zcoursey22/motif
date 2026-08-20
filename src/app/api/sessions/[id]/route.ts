@@ -1,4 +1,3 @@
-// app/api/sessions/[id]/route.ts
 import { DEMO_MODE } from '@/lib/demo';
 import { db } from '@/lib/db/client';
 import { entries, sessions } from '@/lib/db/schema';
@@ -35,7 +34,6 @@ export async function PATCH(
 
       if (!updated) return null;
 
-      // full replace of entries
       await tx.delete(entries).where(eq(entries.sessionId, id));
       if (input.data.entries.length) {
         await tx

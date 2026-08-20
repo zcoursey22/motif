@@ -175,7 +175,6 @@ export function FocusMultiSelect({
           >
             <div className="overflow-y-auto p-3 pr-2">
               {FOCUS_GROUPS.map(group => {
-                // In read mode, only render groups that have a selected item.
                 const items = readOnly
                   ? group.items.filter(t => focus.includes(t))
                   : group.items;

@@ -1,4 +1,3 @@
-// hooks/useEntryRows.ts
 import { useReducer } from 'react';
 import { EditableEntry } from '@/lib/schemas/session';
 

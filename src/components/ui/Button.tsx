@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import NextLink from 'next/link';
+import { ActionColor } from './constants';
 
 const ButtonVariant = {
   SOLID: 'solid',
@@ -7,17 +8,7 @@ const ButtonVariant = {
 } as const;
 type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 
-const ButtonColor = {
-  PRIMARY: 'primary',
-  SECONDARY: 'secondary',
-  SUCCESS: 'success',
-  WARNING: 'warn',
-  DELETE: 'error',
-  BRAND: 'brand',
-} as const;
-type ButtonColor = (typeof ButtonColor)[keyof typeof ButtonColor];
-
-const SOLID_CLASSNAMES: Record<ButtonColor, string> = {
+const SOLID_CLASSNAMES: Record<ActionColor, string> = {
   primary: `bg-blue-400 hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400`,
   secondary: `bg-neutral-400 hover:bg-neutral-500 dark:bg-neutral-500 dark:hover:bg-neutral-400`,
   success: ` bg-green-400 hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400`,
@@ -26,7 +17,7 @@ const SOLID_CLASSNAMES: Record<ButtonColor, string> = {
   brand: `bg-indigo-400 hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400`,
 };
 
-const GHOST_CLASSNAMES: Record<ButtonColor, string> = {
+const GHOST_CLASSNAMES: Record<ActionColor, string> = {
   primary: `text-blue-500 dark:text-blue-400
     hover:bg-blue-500 dark:hover:bg-blue-400`,
   secondary: `text-neutral-700 dark:text-neutral-200
@@ -46,7 +37,7 @@ const ICON_STROKE = 2.5;
 
 type ButtonProps = {
   variant?: ButtonVariant;
-  color?: ButtonColor;
+  color?: ActionColor;
   icon?: LucideIcon;
   href?: string;
   iconClassName?: string;

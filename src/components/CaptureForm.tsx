@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation';
 import { EntryTable } from './EntryTable';
 import { useEntryRows } from '@/hooks/useEntryRows';
 import { CollapsibleText } from './ui/CollapsibleText';
+import { ConfirmModal } from './ui/ConfirmModal';
+import { entries } from '@/lib/db/schema';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
@@ -25,6 +27,7 @@ export default function CaptureForm() {
   const [hasCreateErrored, setHasCreateErrored] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionAttempts, setSubmissionAttempts] = useState(0);
+  const [confirmBackModalOpen, setConfirmBackModalOpen] = useState(false);
 
   const { rows, setRows, updateRow, removeRow, addRow } = useEntryRows([]);
 
@@ -68,6 +71,14 @@ export default function CaptureForm() {
   };
 
   const handleBack = () => {
+    if (!rows.length) {
+      doClearAndBack();
+      return;
+    }
+    setConfirmBackModalOpen(true);
+  };
+
+  const doClearAndBack = () => {
     setRows([]);
     setHasCreateErrored(false);
     setSubmissionAttempts(0);
@@ -116,6 +127,17 @@ export default function CaptureForm() {
 
   return (
     <>
+      <ConfirmModal
+        isOpen={confirmBackModalOpen}
+        message="Discard changes?"
+        confirmLabel="Discard"
+        confirmColor="brand"
+        onConfirm={() => {
+          setConfirmBackModalOpen(false);
+          doClearAndBack();
+        }}
+        onCancel={() => setConfirmBackModalOpen(false)}
+      />
       <div
         onClick={handleTextAreaContainerClick}
         className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl bg-white dark:bg-black ${
