@@ -150,7 +150,11 @@ export default function SessionList() {
       <ul className="flex flex-col gap-4">
         {visible.map(session => (
           <li key={session.id}>
-            <SessionCard session={session} />
+            <SessionCard
+              session={session}
+              isSomeSessionBeingEdited={isEditingSession}
+              setIsSomeSessionBeingEdited={setIsEditingSession}
+            />
           </li>
         ))}
       </ul>

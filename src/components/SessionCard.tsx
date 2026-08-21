@@ -14,9 +14,17 @@ import { AppError, getErrorMessage } from '@/lib/utils/api';
 import { CLIENT_DEMO_MODE } from '@/lib/demo';
 import { ConfirmModal } from './ui/ConfirmModal';
 
-type Props = { session: Awaited<ReturnType<typeof getSessions>>[number] };
+type Props = {
+  session: Awaited<ReturnType<typeof getSessions>>[number];
+  isSomeSessionBeingEdited: boolean;
+  setIsSomeSessionBeingEdited: (b: boolean) => void;
+};
 
-export default function SessionCard({ session }: Props) {
+export default function SessionCard({
+  session,
+  isSomeSessionBeingEdited,
+  setIsSomeSessionBeingEdited,
+}: Props) {
   const { id, rawText, entries } = session;
 
   const [occurredOn, setOccurredOn] = useState(session.occurredOn);
@@ -65,6 +73,7 @@ export default function SessionCard({ session }: Props) {
         onSuccess: () => {
           setIsBusy(false);
           setMode('read');
+          setIsSomeSessionBeingEdited(false);
         },
         onError: e => {
           setIsBusy(false);
@@ -88,6 +97,7 @@ export default function SessionCard({ session }: Props) {
     setOccurredOn(session.occurredOn);
     setRows(entries);
     setError(null);
+    setIsSomeSessionBeingEdited(false);
     setMode('read');
   };
 
@@ -179,13 +189,14 @@ export default function SessionCard({ session }: Props) {
                     variant="ghost"
                     onClick={() => {
                       if (!isBusy) {
+                        setIsSomeSessionBeingEdited(true);
                         setMode('edit');
                         setError(null);
                       }
                     }}
-                    aria-disabled={isBusy}
+                    aria-disabled={isSomeSessionBeingEdited || isBusy}
                     aria-label="Edit session"
-                    isBusyUnstyled
+                    isBusyUnstyled={!isSomeSessionBeingEdited}
                   >
                     <Edit />
                   </IconButton>
