@@ -79,3 +79,4 @@ export type Entry = z.infer<typeof EntrySchema>;
 export type ParsedEntry = z.infer<typeof ParsedEntrySchema>;
 export type EditableEntry = z.infer<typeof EditableEntrySchema>;
 export type Session = z.infer<typeof SessionSchema>;
+export type SessionWithEntries = Session & { entries: Entry[] };

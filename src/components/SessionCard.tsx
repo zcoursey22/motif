@@ -132,7 +132,7 @@ export default function SessionCard({ session }: Props) {
         isOpen={confirmCancelModalOpen}
         message="Discard changes?"
         confirmLabel="Discard"
-        confirmColor="secondary"
+        confirmColor="brand"
         onConfirm={() => {
           setConfirmCancelModalOpen(false);
           doResetAndClose();

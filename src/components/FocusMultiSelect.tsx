@@ -111,7 +111,11 @@ export function FocusMultiSelect({
   };
 
   if (readOnly && !focus.length) {
-    return <span className="text-neutral-500 dark:text-neutral-400">-</span>;
+    return (
+      <span className="text-neutral-500 dark:text-neutral-400 self-center">
+        -
+      </span>
+    );
   }
 
   const canOpen = !disabled;

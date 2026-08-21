@@ -2,7 +2,7 @@ import CaptureView from '../components/CaptureForm';
 
 export default function Home() {
   return (
-    <main className="flex flex-col gap-4 grow items-center justify-start w-3xl pt-[25vh]">
+    <main className="flex flex-col gap-4 grow items-center justify-start w-3xl pt-[25vh] pt-4 pb-8">
       <h1 className="text-xl text-neutral-600 dark:text-neutral-300">
         Log a practice session
       </h1>
