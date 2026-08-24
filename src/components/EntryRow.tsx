@@ -80,10 +80,11 @@ export function EntryRow({
         className={`placeholder-neutral-300 dark:placeholder-neutral-600
           bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
                       aria-disabled:field-busy aria-disabled:cursor-default aria-disabled:point-events-none
+                      focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
                       ${
                         isInvalid
                           ? 'outline-red-500 dark:outline-red-400'
-                          : 'outline-transparent focus:outline-transparent'
+                          : 'outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400'
                       }`}
         aria-disabled={isBusy}
         aria-label="Instrument"
@@ -110,7 +111,7 @@ export function EntryRow({
         ariaLabel="Focus"
       />
       <div
-        className={`flex items-stretch justify-center bg-white dark:bg-black shadow-xs rounded-2xl px-4 py-2 ${
+        className={`flex items-stretch justify-center bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400 ${
           isBusy ? 'field-busy' : ''
         }`}
       >
@@ -135,9 +136,11 @@ export function EntryRow({
         }}
         disabled={isBusy}
         className={`placeholder-neutral-300 dark:placeholder-neutral-600
-          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 focus:outline-none
-                      read-only:field-busy`}
+          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2
+                      read-only:field-busy
+                      focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400`}
         aria-label="Duration"
+        // TODO: Why can't I get no outline on focus, but outline on focus-visible for this field only?
       />
       {!isBusy && mode === 'edit' && (
         <IconButton
@@ -150,9 +153,8 @@ export function EntryRow({
           }}
           aria-label="Delete row"
           aria-disabled={!canRemove}
-        >
-          <X size={18} strokeWidth={2} />
-        </IconButton>
+          icon={X}
+        />
       )}
     </div>
   );

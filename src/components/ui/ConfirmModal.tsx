@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ActionColor } from './constants';
 import { Button } from './Button';
+import { FocusTrap } from 'focus-trap-react';
 
 type ConfirmModalProps = {
   isOpen: boolean;
@@ -32,27 +33,33 @@ export function ConfirmModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4"
-      onClick={onCancel}
+    <FocusTrap
+      focusTrapOptions={{
+        escapeDeactivates: false,
+      }}
     >
       <div
-        className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 p-6 shadow-md border-2 border-neutral-300 dark:border-neutral-700"
-        onClick={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4"
+        onClick={onCancel}
       >
-        <p className="text-neutral-600 dark:text-neutral-300">{message}</p>
-        <div className="flex justify-end gap-2">
-          <Button onClick={onCancel} variant="ghost">
-            Cancel
-          </Button>
-          <Button onClick={onConfirm} color={confirmColor}>
-            {confirmLabel}
-          </Button>
+        <div
+          className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 p-6 shadow-md border-2 border-neutral-300 dark:border-neutral-700"
+          onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
+          <p className="text-neutral-600 dark:text-neutral-300">{message}</p>
+          <div className="flex justify-end gap-2">
+            <Button onClick={onCancel} variant="ghost" focusOutline>
+              Cancel
+            </Button>
+            <Button onClick={onConfirm} color={confirmColor} focusOutline>
+              {confirmLabel}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>,
+    </FocusTrap>,
     document.body
   );
 }

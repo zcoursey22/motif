@@ -118,7 +118,7 @@ export function StarRating({
             onClick={() => commit(star === current ? 0 : star)}
             onMouseEnter={() => setHover(star)}
             onMouseLeave={() => setHover(0)}
-            className="cursor-pointer rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="cursor-pointer outline-none"
           >
             <Star
               className={`transition-colors ${starClass(classify(star))}`}

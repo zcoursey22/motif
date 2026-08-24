@@ -1,5 +1,6 @@
 'use client';
 
+import { FocusTrap } from 'focus-trap-react';
 import { ChevronDown, X } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -131,18 +132,85 @@ export function MultiSelect<T extends string>({
     );
   };
 
+  const content = (
+    <div
+      ref={floatEl}
+      style={{
+        position: 'fixed',
+        top: pos.top,
+        left: pos.left,
+        maxHeight: pos.maxHeight,
+      }}
+      className="z-50 flex w-[min(90vw,32rem)] flex-col overflow-hidden rounded-2xl bg-white dark:bg-black shadow-lg outline-2 outline-neutral-100 dark:outline-neutral-800"
+    >
+      <div className="overflow-y-auto p-3 pr-2">
+        {groups.map(group => {
+          const items = readOnly
+            ? group.items.filter(t => value.includes(t))
+            : group.items;
+          if (!items.length) return null;
+          return (
+            <div key={group.label} className="mb-3 last:mb-0">
+              <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
+                {group.label}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {items.map(tag => {
+                  const selected = value.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      role="option"
+                      tabIndex={0}
+                      aria-selected={selected}
+                      disabled={readOnly}
+                      onClick={() => toggle(tag)}
+                      className={`font-medium text-sm px-2.5 py-1 rounded-full outline-2 transition-colors
+                        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
+                        ${readOnly ? 'cursor-default' : 'cursor-pointer'} ${
+                          selected
+                            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
+                            : 'bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-900'
+                        }`}
+                    >
+                      {labels[tag]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <div
         ref={refEl}
         role="button"
+        tabIndex={canOpen ? 0 : -1}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
-        onClick={() => canOpen && setOpen(o => !o)}
-        className={`cursor-default input-wrapper flex items-center outline-2 pl-2
-          ${readOnly ? '' : 'bg-white dark:bg-black shadow-xs rounded-2xl'}
-          ${open ? 'shadow-md' : ''}
+        onClick={() => {
+          if (canOpen) {
+            setOpen(o => !o);
+            refEl.current?.blur();
+          }
+        }}
+        onKeyDown={e => {
+          if (!canOpen) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setOpen(o => !o);
+            refEl.current?.blur();
+          }
+        }}
+        className={`rounded-lg cursor-default input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
+          ${readOnly ? '' : `bg-white dark:bg-black focus-within:shadow-md rounded-2xl ${open ? 'shadow-md' : 'shadow-xs'}`}
           ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'}
           ${disabled ? 'field-busy' : ''}`}
       >
@@ -158,9 +226,9 @@ export function MultiSelect<T extends string>({
               if (!disabled) onChange!([]);
             }}
             aria-label="Clear"
-            className="p-2 cursor-pointer shrink-0 self-center hover:text-red-500 dark:hover:text-red-400"
+            className="p-2 cursor-pointer shrink-0 w-[40px] h-[40px] flex justify-center items-center self-center hover:text-red-500 dark:hover:text-red-400 rounded-xl focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400"
           >
-            <X size={16} />
+            <X aria-hidden size={14} />
           </button>
         ) : (
           <>
@@ -180,56 +248,20 @@ export function MultiSelect<T extends string>({
 
       {open &&
         createPortal(
-          <div
-            ref={floatEl}
-            style={{
-              position: 'fixed',
-              top: pos.top,
-              left: pos.left,
-              maxHeight: pos.maxHeight,
-            }}
-            className="z-50 flex w-[min(90vw,32rem)] flex-col overflow-hidden rounded-2xl bg-white dark:bg-black shadow-lg outline-2 outline-neutral-100 dark:outline-neutral-800"
-          >
-            <div className="overflow-y-auto p-3 pr-2">
-              {groups.map(group => {
-                const items = readOnly
-                  ? group.items.filter(t => value.includes(t))
-                  : group.items;
-                if (!items.length) return null;
-                return (
-                  <div key={group.label} className="mb-3 last:mb-0">
-                    <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                      {group.label}
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {items.map(tag => {
-                        const selected = value.includes(tag);
-                        return (
-                          <button
-                            key={tag}
-                            type="button"
-                            role="option"
-                            aria-selected={selected}
-                            disabled={readOnly}
-                            onClick={() => toggle(tag)}
-                            className={`font-medium text-sm px-2.5 py-1 rounded-full outline-1 transition-colors ${
-                              readOnly ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              selected
-                                ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
-                                : 'bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-900'
-                            }`}
-                          >
-                            {labels[tag]}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>,
+          readOnly ? (
+            content
+          ) : (
+            <FocusTrap
+              active={open}
+              focusTrapOptions={{
+                clickOutsideDeactivates: false,
+                escapeDeactivates: false,
+                returnFocusOnDeactivate: true,
+              }}
+            >
+              {content}
+            </FocusTrap>
+          ),
           document.body
         )}
     </>

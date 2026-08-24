@@ -46,8 +46,13 @@ textarea,
 select,
 .input-wrapper {
   transition-property:
-    color, background-color, border-color, box-shadow, outline, border,
-    background, filter;
+    color, background-color, border-color, box-shadow, border, background,
+    filter;
+  transition-duration: 100ms;
+}
+
+.input-wrapper {
+  transition-property: outline-color;
   transition-duration: 100ms;
 }
 

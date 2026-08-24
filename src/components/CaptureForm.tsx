@@ -19,7 +19,6 @@ import { EntryTable } from './EntryTable';
 import { useEntryRows } from '@/hooks/useEntryRows';
 import { CollapsibleText } from './ui/CollapsibleText';
 import { ConfirmModal } from './ui/ConfirmModal';
-import { entries } from '@/lib/db/schema';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
@@ -241,7 +240,7 @@ export default function CaptureForm() {
                   onChange={e => setOccurredOn(e.target.value)}
                   aria-disabled={isSubmitting}
                   readOnly={isSubmitting}
-                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 focus:outline-none read-only:field-busy"
+                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 read-only:field-busy has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400"
                 />
               </div>
               {isSubmitting ? (

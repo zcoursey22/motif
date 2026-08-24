@@ -42,6 +42,7 @@ type ButtonProps = {
   href?: string;
   iconClassName?: string;
   isBusyUnstyled?: boolean;
+  focusOutline?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function BaseButton({
@@ -53,10 +54,12 @@ function BaseButton({
   children,
   iconClassName,
   isBusyUnstyled,
+  focusOutline,
   ...rest
 }: ButtonProps) {
-  const classes = `min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto aria-disabled:pointer-events-none
+  const classes = `focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400 min-h-[40px] font-medium inline-flex justify-center items-center gap-2 rounded-xl cursor-pointer aria-disabled:cursor-default disabled:cursor-default pointer-events-auto aria-disabled:pointer-events-none
   ${isBusyUnstyled ? '' : 'aria-disabled:field-busy'}
+  ${focusOutline ? 'focus:outline-2 focus:outline-blue-500 dark:focus:outline-blue-400' : ''}
     ${
       variant === 'solid'
         ? `text-white ${SOLID_CLASSNAMES[color]}`

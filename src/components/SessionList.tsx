@@ -96,8 +96,8 @@ export default function SessionList() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="sticky top-15 z-10 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-centermt-2 pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
+    <div className="flex flex-col gap-3 items-center">
+      <div className="w-4xl px-16 sticky top-15 z-10 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-centermt-2 pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
         <div className="flex gap-2 items-center">
           <Button
             icon={ArrowDown}
@@ -115,31 +115,41 @@ export default function SessionList() {
           </span>
           <div
             onClick={handleSearchInputContainerClick}
-            className="flex gap-2 items-center justify-center shadow-xs focus-within:shadow-md rounded-2xl bg-white dark:bg-black cursor-text"
+            className={`flex gap-2 items-center justify-center shadow-xs focus-within:shadow-md rounded-2xl bg-white dark:bg-black cursor-text has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400
+              ${isEditingSession ? 'field-busy pointer-events-none' : ''}`}
           >
             <div className="pl-4" onClick={handleSearchInputContainerClick}>
               <Search
                 aria-hidden
                 size={18}
                 strokeWidth={2.5}
-                className="text-neutral-400"
+                className="text-neutral-400 pointer-events-none"
               />
             </div>
             <input
               className="focus-visible:outline-none w-24"
-              onChange={e => setSearch(e.currentTarget.value)}
+              onChange={e => {
+                if (isEditingSession) return;
+                setSearch(e.currentTarget.value);
+              }}
               ref={searchInputElement}
               value={search}
+              aria-disabled={isEditingSession}
             />
             <button
+              type="button"
               onClick={e => {
+                if (isEditingSession) return;
+
                 if (search === '') handleSearchInputContainerClick(e);
                 else setSearch('');
               }}
-              className={`p-2 w-[40px] h-[40px] text-red-500 dark:text-red-400 hover:text-red-600 hover:dark:text-red-300
+              tabIndex={search === '' ? -1 : 0}
+              aria-label="Clear search"
+              className={`p-2 w-[40px] h-[40px] shrink-0 flex justify-center items-center hover:text-red-500 dark:hover:text-red-400 rounded-xl focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
                 ${search !== '' ? 'cursor-pointer' : 'cursor-text'}`}
             >
-              {search !== '' && <X aria-hidden size={18} strokeWidth={2.5} />}
+              {search !== '' && <X aria-hidden size={14} />}
             </button>
           </div>
         </div>
@@ -147,7 +157,7 @@ export default function SessionList() {
           <NewSessionButton />
         </div>
       </div>
-      <ul className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-4 w-4xl px-16">
         {visible.map(session => (
           <li key={session.id}>
             <SessionCard
