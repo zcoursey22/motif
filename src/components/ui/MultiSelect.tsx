@@ -195,10 +195,12 @@ export function MultiSelect<T extends string>({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
+        onBlur={() => {
+          if (readOnly) setOpen(false);
+        }}
         onClick={() => {
           if (canOpen) {
             setOpen(o => !o);
-            refEl.current?.blur();
           }
         }}
         onKeyDown={e => {
@@ -206,7 +208,6 @@ export function MultiSelect<T extends string>({
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             setOpen(o => !o);
-            refEl.current?.blur();
           }
         }}
         className={`rounded-lg cursor-default input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
