@@ -1,12 +1,14 @@
 'use client';
 
 import { EditableEntry } from '@/lib/schemas/session';
-import { FocusMultiSelect } from './FocusMultiSelect';
+import { MultiSelect } from './ui/MultiSelect';
 import { IconButton } from './ui/Button';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { StarRating } from './StarRating';
 import {
+  FOCUS_GROUPS,
+  FOCUS_LABELS,
   Instrument,
   INSTRUMENT_GROUPS,
   INSTRUMENT_LABELS,
@@ -45,7 +47,12 @@ export function EntryRow({
           {instrument ? INSTRUMENT_LABELS[instrument] : '-'}
         </span>
         <span>
-          {focus?.length ? <FocusMultiSelect focus={focus} /> : <span>-</span>}
+          <MultiSelect
+            value={focus}
+            groups={FOCUS_GROUPS}
+            labels={FOCUS_LABELS}
+            ariaLabel="Focus"
+          />
         </span>
         <StarRating value={selfRating} />
         <span className="text-right font-medium">
@@ -93,15 +100,14 @@ export function EntryRow({
           </optgroup>
         ))}
       </select>
-      <FocusMultiSelect
-        focus={focus}
+      <MultiSelect
+        value={focus}
+        onChange={next => onUpdate?.(id, { focus: next })}
+        groups={FOCUS_GROUPS}
+        labels={FOCUS_LABELS}
         error={isInvalid}
-        onChange={next => {
-          onUpdate?.(id, {
-            focus: next,
-          });
-        }}
         disabled={isBusy}
+        ariaLabel="Focus"
       />
       <div
         className={`flex items-stretch justify-center bg-white dark:bg-black shadow-xs rounded-2xl px-4 py-2 ${
