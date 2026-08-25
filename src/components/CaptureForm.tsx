@@ -240,7 +240,9 @@ export default function CaptureForm() {
                   onChange={e => setOccurredOn(e.target.value)}
                   aria-disabled={isSubmitting}
                   readOnly={isSubmitting}
-                  className="bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 read-only:field-busy has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400"
+                  className={`bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 read-only:field-busy focus-within:outline-2 has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400 focus-within:outline-blue-500 dark:focus-within:outline-blue-400 ${
+                    isSubmitting ? 'cursor-default' : 'cursor-text'
+                  }`}
                 />
               </div>
               {isSubmitting ? (

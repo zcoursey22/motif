@@ -22,9 +22,12 @@ type MultiSelectProps<T extends string> = {
   disabled?: boolean;
 };
 
-function Chip({ label }: { label: string }) {
+function Chip({ label, readOnly }: { label: string; readOnly: boolean }) {
   return (
-    <span className="shrink-0 inline-flex items-center font-medium text-sm px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200">
+    <span
+      className={`shrink-0 inline-flex items-center font-medium text-sm px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200
+    ${readOnly ? 'cursor-pointer' : 'cursor-default'}`}
+    >
       {label}
     </span>
   );
@@ -120,16 +123,18 @@ export function MultiSelect<T extends string>({
       );
     }
     if (value.length <= chipsShown) {
-      return value.map(v => <Chip key={v} label={labels[v]} />);
+      return value.map(v => (
+        <Chip key={v} label={labels[v]} readOnly={readOnly} />
+      ));
     }
     const shown = value.slice(0, chipsShown - 1);
     const remaining = value.length - shown.length;
     return (
       <>
         {shown.map(v => (
-          <Chip key={v} label={labels[v]} />
+          <Chip key={v} label={labels[v]} readOnly={readOnly} />
         ))}
-        <Chip label={`+${remaining} more`} />
+        <Chip label={`+${remaining} more`} readOnly={readOnly} />
       </>
     );
   };
@@ -169,8 +174,8 @@ export function MultiSelect<T extends string>({
                       disabled={readOnly}
                       onClick={() => toggle(tag)}
                       className={`font-medium text-sm px-2.5 py-1 rounded-full outline-2 transition-colors
-                        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
-                        ${readOnly ? 'cursor-default' : 'cursor-pointer'} ${
+                        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400 cursor-default
+                        ${
                           selected
                             ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
                             : 'bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-900'
@@ -198,13 +203,13 @@ export function MultiSelect<T extends string>({
       disabled={disabled}
       onClick={() => canOpen && setOpen(o => !o)}
       className={`shrink-0 flex justify-center font-medium text-sm rounded-full transition-colors outline-2
-        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400 cursor-default
+        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
         ${
           showClear
             ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
             : 'pr-2.5 bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700'
         }
-        ${disabled ? 'field-busy' : showClear ? '' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
+        ${disabled ? 'field-busy cursor-default' : `cursor-pointer ${showClear ? '' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}`}
     >
       <span className="pl-2.5 py-1">
         {value.length === 0
@@ -250,10 +255,10 @@ export function MultiSelect<T extends string>({
           setOpen(o => !o);
         }
       }}
-      className={`cursor-default input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
+      className={`input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
         ${readOnly ? '' : `bg-white dark:bg-black focus-within:shadow-md rounded-2xl ${open ? 'shadow-md' : 'shadow-xs'}`}
         ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'}
-        ${disabled ? 'field-busy' : ''}`}
+        ${disabled ? 'field-busy pointer-events-none' : ''}`}
     >
       <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
         {renderSummary()}

@@ -83,14 +83,7 @@ export default function SessionList() {
       </div>
     );
 
-  if (!sessions)
-    return (
-      <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300">
-        <Disc3 size={64} strokeWidth={1} className="animate-spin" aria-hidden />
-      </div>
-    );
-
-  if (!sessions.length) {
+  if (!sessions?.length) {
     return (
       <div className="flex flex-col items-center gap-4 pt-4">
         <span className="text-neutral-500 dark:text-neutral-400">
