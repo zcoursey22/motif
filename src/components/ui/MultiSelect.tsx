@@ -12,6 +12,7 @@ type MultiSelectProps<T extends string> = {
   onChange?: (next: T[]) => void;
   groups: Group<T>[];
   labels: Record<T, string>;
+  variant?: 'tags' | 'pill';
   chipsShown?: number;
   noun?: string;
   placeholder?: string;
@@ -34,6 +35,7 @@ export function MultiSelect<T extends string>({
   onChange,
   groups,
   labels,
+  variant = 'tags',
   chipsShown = 3,
   noun = 'selected',
   placeholder = 'Click to add',
@@ -45,14 +47,16 @@ export function MultiSelect<T extends string>({
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0, maxHeight: 400 });
   const refEl = useRef<HTMLDivElement>(null);
+  const pillEl = useRef<HTMLButtonElement>(null);
   const floatEl = useRef<HTMLDivElement>(null);
 
   const readOnly = !onChange;
+  const isPill = variant === 'pill';
 
   useLayoutEffect(() => {
     if (!open) return;
     const place = () => {
-      const el = refEl.current;
+      const el = isPill ? pillEl.current : refEl.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
       const top = r.bottom + 4;
@@ -69,13 +73,14 @@ export function MultiSelect<T extends string>({
       window.removeEventListener('scroll', place, true);
       window.removeEventListener('resize', place);
     };
-  }, [open]);
+  }, [open, isPill]);
 
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node;
-      if (!refEl.current?.contains(t) && !floatEl.current?.contains(t)) {
+      const trigger = isPill ? pillEl.current : refEl.current;
+      if (!trigger?.contains(t) && !floatEl.current?.contains(t)) {
         setOpen(false);
       }
     };
@@ -86,7 +91,7 @@ export function MultiSelect<T extends string>({
       document.removeEventListener('mousedown', onDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [open]);
+  }, [open, isPill]);
 
   const toggle = (tag: T) => {
     if (readOnly || disabled) return;
@@ -113,9 +118,6 @@ export function MultiSelect<T extends string>({
           {placeholder}
         </span>
       );
-    }
-    if (chipsShown <= 0) {
-      return <Chip label={`${value.length} ${noun}`} />;
     }
     if (value.length <= chipsShown) {
       return value.map(v => <Chip key={v} label={labels[v]} />);
@@ -186,66 +188,110 @@ export function MultiSelect<T extends string>({
     </div>
   );
 
+  const trigger = isPill ? (
+    <button
+      ref={pillEl}
+      type="button"
+      aria-haspopup="listbox"
+      aria-expanded={open}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onClick={() => canOpen && setOpen(o => !o)}
+      className={`shrink-0 flex justify-center font-medium text-sm rounded-full transition-colors outline-2
+        focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400 cursor-default
+        ${
+          showClear
+            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
+            : 'pr-2.5 bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700'
+        }
+        ${disabled ? 'field-busy' : showClear ? '' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}
+    >
+      <span className="pl-2.5 py-1">
+        {value.length === 0
+          ? placeholder
+          : value.length === 1
+            ? labels[value[0]]
+            : `${value.length} ${noun}`}
+      </span>
+      {showClear && (
+        <span
+          role="button"
+          tabIndex={-1}
+          aria-label="Clear"
+          onClick={e => {
+            e.stopPropagation();
+            if (!disabled) onChange!([]);
+          }}
+          className={`px-2.5 py-1 shrink-0 flex justify-center items-center
+            ${disabled ? 'cursor-default' : 'cursor-pointer hover:text-red-500 dark:hover:text-red-400'}`}
+        >
+          <X aria-hidden size={14} />
+        </span>
+      )}
+    </button>
+  ) : (
+    <div
+      ref={refEl}
+      role="button"
+      tabIndex={canOpen ? 0 : -1}
+      aria-haspopup="listbox"
+      aria-expanded={open}
+      aria-label={ariaLabel}
+      onBlur={() => {
+        if (readOnly) setOpen(false);
+      }}
+      onClick={() => {
+        if (canOpen) setOpen(o => !o);
+      }}
+      onKeyDown={e => {
+        if (!canOpen) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setOpen(o => !o);
+        }
+      }}
+      className={`cursor-default input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
+        ${readOnly ? '' : `bg-white dark:bg-black focus-within:shadow-md rounded-2xl ${open ? 'shadow-md' : 'shadow-xs'}`}
+        ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'}
+        ${disabled ? 'field-busy' : ''}`}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
+        {renderSummary()}
+      </div>
+
+      {showClear ? (
+        <button
+          type="button"
+          onClick={e => {
+            e.stopPropagation();
+            if (!disabled) onChange!([]);
+          }}
+          aria-label="Clear"
+          className={`p-2 shrink-0 w-[40px] h-[40px] flex justify-center items-center self-center rounded-xl focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
+          ${disabled ? 'cursor-default' : 'cursor-pointer hover:text-red-500 dark:hover:text-red-400'}`}
+        >
+          <X aria-hidden size={14} />
+        </button>
+      ) : (
+        <>
+          {!readOnly && (
+            <div className="p-2">
+              <ChevronDown
+                size={16}
+                className={`shrink-0 self-center transition-transform ${
+                  open ? 'rotate-180' : ''
+                }`}
+              />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+
   return (
     <>
-      <div
-        ref={refEl}
-        role="button"
-        tabIndex={canOpen ? 0 : -1}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label={ariaLabel}
-        onBlur={() => {
-          if (readOnly) setOpen(false);
-        }}
-        onClick={() => {
-          if (canOpen) {
-            setOpen(o => !o);
-          }
-        }}
-        onKeyDown={e => {
-          if (!canOpen) return;
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setOpen(o => !o);
-          }
-        }}
-        className={`rounded-lg cursor-default input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
-          ${readOnly ? '' : `bg-white dark:bg-black focus-within:shadow-md rounded-2xl ${open ? 'shadow-md' : 'shadow-xs'}`}
-          ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'}
-          ${disabled ? 'field-busy' : ''}`}
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
-          {renderSummary()}
-        </div>
-
-        {showClear ? (
-          <button
-            type="button"
-            onClick={e => {
-              e.stopPropagation();
-              if (!disabled) onChange!([]);
-            }}
-            aria-label="Clear"
-            className="p-2 cursor-pointer shrink-0 w-[40px] h-[40px] flex justify-center items-center self-center hover:text-red-500 dark:hover:text-red-400 rounded-xl focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400"
-          >
-            <X aria-hidden size={14} />
-          </button>
-        ) : (
-          <>
-            {!readOnly && (
-              <div className="p-2">
-                <ChevronDown
-                  size={16}
-                  className={`shrink-0 self-center transition-transform ${
-                    open ? 'rotate-180' : ''
-                  }`}
-                />
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {trigger}
 
       {open &&
         createPortal(
@@ -258,6 +304,7 @@ export function MultiSelect<T extends string>({
                 clickOutsideDeactivates: false,
                 escapeDeactivates: false,
                 returnFocusOnDeactivate: true,
+                allowOutsideClick: true,
               }}
             >
               {content}

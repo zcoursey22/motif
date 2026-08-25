@@ -6,9 +6,17 @@ import SessionCard from './SessionCard';
 import { useSessions } from '@/hooks/useSessions';
 import { AppError, getErrorMessage } from '@/lib/utils/api';
 import { useMemo, useRef, useState } from 'react';
-import { Focus, Instrument } from '@/lib/constants';
+import {
+  Focus,
+  FOCUS_GROUPS,
+  FOCUS_LABELS,
+  Instrument,
+  INSTRUMENT_GROUPS,
+  INSTRUMENT_LABELS,
+} from '@/lib/constants';
 import { SessionWithEntries } from '@/lib/schemas/session';
 import { Button } from './ui/Button';
+import { MultiSelect } from './ui/MultiSelect';
 
 function filterSessions(
   sessions: SessionWithEntries[],
@@ -97,8 +105,8 @@ export default function SessionList() {
 
   return (
     <div className="flex flex-col gap-3 items-center">
-      <div className="w-4xl px-16 sticky top-15 z-10 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-centermt-2 pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
-        <div className="flex gap-2 items-center">
+      <div className="w-4xl px-16 sticky top-15 z-10 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-center mt-2 pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
+        <div className="flex-1 flex justify-start">
           <Button
             icon={ArrowDown}
             variant="ghost"
@@ -108,11 +116,9 @@ export default function SessionList() {
           >
             {sortAsc ? 'Oldest' : 'Latest'}
           </Button>
-          <span className="text-neutral-500 dark:text-neutral-400 text-center min-w-24">
-            {visible.length !== sessions.length
-              ? `${visible.length} of ${sessions.length}`
-              : `${visible.length} sessions`}
-          </span>
+        </div>
+
+        <div className="flex gap-2 items-center">
           <div
             onClick={handleSearchInputContainerClick}
             className={`flex gap-2 items-center justify-center shadow-xs focus-within:shadow-md rounded-2xl bg-white dark:bg-black cursor-text has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400
@@ -152,9 +158,36 @@ export default function SessionList() {
               {search !== '' && <X aria-hidden size={14} />}
             </button>
           </div>
+          <MultiSelect
+            value={instruments}
+            onChange={setInstruments}
+            groups={INSTRUMENT_GROUPS}
+            labels={INSTRUMENT_LABELS}
+            disabled={isEditingSession}
+            variant="pill"
+            noun="instruments"
+            placeholder="Instruments"
+            ariaLabel="Filter by instrument"
+          />
+          <MultiSelect
+            value={focuses}
+            onChange={setFocuses}
+            groups={FOCUS_GROUPS}
+            labels={FOCUS_LABELS}
+            disabled={isEditingSession}
+            variant="pill"
+            noun="focuses"
+            placeholder="Focus"
+            ariaLabel="Filter by focus"
+          />
         </div>
-        <div className="self-end">
-          <NewSessionButton />
+
+        <div className="flex-1 flex justify-end">
+          <span className="text-neutral-500 dark:text-neutral-400">
+            {visible.length !== sessions.length
+              ? `${visible.length} of ${sessions.length}`
+              : `${visible.length} sessions`}
+          </span>
         </div>
       </div>
       <ul className="flex flex-col gap-4 w-4xl px-16">
