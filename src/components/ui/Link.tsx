@@ -20,8 +20,8 @@ export function Link({ className, children, href, ...rest }: LinkProps) {
       className={`${LINK}
         ${
           isActive
-            ? 'text-indigo-600 dark:text-indigo-300'
-            : 'text-indigo-900 dark:text-indigo-100'
+            ? 'text-indigo-700 dark:text-white underline'
+            : 'text-indigo-900 dark:text-indigo-200 hover:text-indigo-800 hover:dark:text-indigo-100'
         }
         ${className ?? ''}
       `}

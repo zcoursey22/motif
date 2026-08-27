@@ -207,9 +207,9 @@ export function MultiSelect<T extends string>({
         ${
           showClear
             ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
-            : 'pr-2.5 bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-200 dark:outline-neutral-700'
+            : 'pr-2.5 bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-300 dark:outline-neutral-700'
         }
-        ${disabled ? 'field-busy cursor-default' : `cursor-pointer ${showClear ? '' : 'hover:bg-neutral-100 dark:hover:bg-neutral-700'}`}`}
+        ${disabled ? 'field-busy cursor-default' : `cursor-pointer ${showClear ? '' : 'hover:bg-neutral-300 dark:hover:bg-neutral-700'}`}`}
     >
       <span className="pl-2.5 py-1">
         {value.length === 0

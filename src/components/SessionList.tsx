@@ -14,34 +14,9 @@ import {
   INSTRUMENT_GROUPS,
   INSTRUMENT_LABELS,
 } from '@/lib/constants';
-import { SessionWithEntries } from '@/lib/schemas/session';
 import { Button } from './ui/Button';
 import { MultiSelect } from './ui/MultiSelect';
-
-function filterSessions(
-  sessions: SessionWithEntries[],
-  {
-    search,
-    instruments,
-    focuses,
-  }: { search: string; instruments: Instrument[]; focuses: Focus[] }
-): SessionWithEntries[] {
-  return sessions.filter(s => {
-    if (search && !s.rawText.toLowerCase().includes(search.toLowerCase()))
-      return false;
-    if (
-      instruments.length &&
-      !s.entries.some(e => e.instrument && instruments.includes(e.instrument))
-    )
-      return false;
-    if (
-      focuses.length &&
-      !s.entries.some(e => e.focus.some(f => focuses.includes(f)))
-    )
-      return false;
-    return true;
-  });
-}
+import { filterSessions } from '@/lib/utils/session';
 
 export default function SessionList() {
   const { data: sessions, isLoading, isError, error } = useSessions();
@@ -64,10 +39,16 @@ export default function SessionList() {
     if (e.target === e.currentTarget) searchInputElement.current?.focus();
   };
 
+  const resetFilters = () => {
+    setSearch('');
+    setInstruments([]);
+    setFocuses([]);
+  };
+
   if (isError)
     return (
       <div
-        className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2`}
+        className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2 pt-4`}
       >
         <CircleAlert />
         <span className="text-neutral-600 dark:text-neutral-300">
@@ -78,7 +59,7 @@ export default function SessionList() {
 
   if (isLoading)
     return (
-      <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300">
+      <div className="inline-flex justify-center gap-2 text-indigo-400 dark:text-indigo-300 pt-4">
         <Disc3 size={64} strokeWidth={1} className="animate-spin" aria-hidden />
       </div>
     );
@@ -98,7 +79,7 @@ export default function SessionList() {
 
   return (
     <div className="flex flex-col gap-3 items-center">
-      <div className="w-4xl px-16 sticky top-15 z-10 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-center mt-2 pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
+      <div className="w-4xl px-16 sticky top-15 z-10 pt-2 justify-between items-center bg-neutral-200 dark:bg-neutral-800 flex flex-wrap gap-2 items-center pb-4 shadow-lg shadow-neutral-200/100 dark:shadow-neutral-800/100">
         <div className="flex-1 flex justify-start">
           <Button
             icon={ArrowDown}
@@ -184,15 +165,28 @@ export default function SessionList() {
         </div>
       </div>
       <ul className="flex flex-col gap-4 w-4xl px-16">
-        {visible.map(session => (
-          <li key={session.id}>
-            <SessionCard
-              session={session}
-              isSomeSessionBeingEdited={isEditingSession}
-              setIsSomeSessionBeingEdited={setIsEditingSession}
-            />
-          </li>
-        ))}
+        {visible.length === 0 ? (
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-neutral-500 dark:text-neutral-400">
+              {"Your current filters didn\'t match any sessions."}
+            </span>
+            <div className="flex justify-center">
+              <Button color="brand" onClick={resetFilters}>
+                Reset filters
+              </Button>
+            </div>
+          </div>
+        ) : (
+          visible.map(session => (
+            <li key={session.id}>
+              <SessionCard
+                session={session}
+                isSomeSessionBeingEdited={isEditingSession}
+                setIsSomeSessionBeingEdited={setIsEditingSession}
+              />
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );

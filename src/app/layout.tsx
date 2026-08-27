@@ -64,9 +64,7 @@ export default function RootLayout({
                 aria-hidden
                 className="text-indigo-500 dark:text-indigo-400"
               />
-              <span className="text-xl text-indigo-900 dark:text-indigo-100">
-                Motif
-              </span>
+              <span className="text-xl text-black dark:text-white">Motif</span>
             </NextLink>
             <Nav />
           </header>
