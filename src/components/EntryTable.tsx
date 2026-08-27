@@ -4,7 +4,8 @@ import { EditableEntry, isEntryValid } from '@/lib/schemas/session';
 import { AppError } from '@/lib/utils/api';
 import { EntryRow } from './EntryRow';
 import { Button } from './ui/Button';
-import { CircleAlert, InfoIcon, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { Notice } from './ui/Notice';
 
 type EntryTableProps = {
   rows: EditableEntry[];
@@ -18,6 +19,14 @@ type EntryTableProps = {
 };
 
 const MAX_ROWS = 10;
+
+function FullWidthRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-subgrid col-span-5 py-2 self-center justify-center items-center inline-flex gap-2">
+      {children}
+    </div>
+  );
+}
 
 export function EntryTable({
   rows,
@@ -51,20 +60,16 @@ export function EntryTable({
           </div>
         )}
         {rows.length === 0 && !listError && (
-          <div className="grid grid-cols-subgrid col-span-5 text-blue-500 dark:text-blue-400 py-2 self-center justify-center items-center inline-flex gap-2">
-            <InfoIcon />
-            <span className="text-neutral-600 dark:text-neutral-300">
+          <FullWidthRow>
+            <Notice variant="info">
               Nothing was parsed. Edit your summary to be more specific.
-            </span>
-          </div>
+            </Notice>
+          </FullWidthRow>
         )}
         {!!listError && (
-          <div className="grid grid-cols-subgrid col-span-5 text-red-500 dark:text-red-400 py-2 self-center justify-center items-center inline-flex gap-2">
-            <CircleAlert />
-            <span className="text-neutral-600 dark:text-neutral-300">
-              {listError.message}
-            </span>
-          </div>
+          <FullWidthRow>
+            <Notice>{listError.message}</Notice>
+          </FullWidthRow>
         )}
         {rows.map(row => (
           <EntryRow
@@ -92,12 +97,11 @@ export function EntryTable({
             className={`text-red-500 dark:text-red-400 inline-flex items-center gap-2 py-2 grow
           ${!!invalidRowIds.length && validationAttempts > 0 ? 'visible' : 'invisible'}`}
           >
-            <CircleAlert />
-            <span className="text-neutral-600 dark:text-neutral-300">
+            <Notice>
               Each entry needs an{' '}
               <span className="font-medium">instrument</span> or{' '}
               <span className="font-medium">focus</span>.
-            </span>
+            </Notice>
           </div>
           {onAdd && (
             <Button

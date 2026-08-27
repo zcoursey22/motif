@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDown, CircleAlert, Disc3, Search, X } from 'lucide-react';
+import { ArrowDown, Disc3, Search, X } from 'lucide-react';
 import NewSessionButton from './NewSessionButton';
 import SessionCard from './SessionCard';
 import { useSessions } from '@/hooks/useSessions';
@@ -17,6 +17,7 @@ import {
 import { Button } from './ui/Button';
 import { MultiSelect } from './ui/MultiSelect';
 import { filterSessions } from '@/lib/utils/session';
+import { Notice } from './ui/Notice';
 
 export default function SessionList() {
   const { data: sessions, isLoading, isError, error } = useSessions();
@@ -47,14 +48,9 @@ export default function SessionList() {
 
   if (isError)
     return (
-      <div
-        className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2 pt-4`}
-      >
-        <CircleAlert />
-        <span className="text-neutral-600 dark:text-neutral-300">
-          {getErrorMessage((error as AppError).code)}
-        </span>
-      </div>
+      <Notice className={`pt-4`}>
+        {getErrorMessage((error as AppError).code)}
+      </Notice>
     );
 
   if (isLoading)
@@ -71,7 +67,7 @@ export default function SessionList() {
           No sessions logged yet.
         </span>
         <div className="flex justify-center">
-          <NewSessionButton />
+          <NewSessionButton iconOnly={false} />
         </div>
       </div>
     );

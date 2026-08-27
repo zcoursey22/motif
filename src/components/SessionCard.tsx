@@ -6,13 +6,14 @@ import { getSessions } from '@/lib/actions/sessions';
 import { EntryTable } from './EntryTable';
 import { Button, IconButton } from './ui/Button';
 import { useEntryRows } from '@/hooks/useEntryRows';
-import { CircleAlert, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 import { parseLocalDate } from '@/lib/utils/date';
 import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
 import { CollapsibleText } from './ui/CollapsibleText';
 import { AppError, getErrorMessage } from '@/lib/utils/api';
 import { CLIENT_DEMO_MODE } from '@/lib/demo';
 import { ConfirmModal } from './ui/ConfirmModal';
+import { Notice } from './ui/Notice';
 
 type Props = {
   session: Awaited<ReturnType<typeof getSessions>>[number];
@@ -173,15 +174,9 @@ export default function SessionCard({
             <span className="min-h-[40px] pt-2 font-medium">
               {getDateString()}
             </span>
-            <div
-              className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2
-                ${error ? 'visible' : 'invisible'}`}
-            >
-              <CircleAlert />
-              <span className="text-neutral-600 dark:text-neutral-300">
-                {error || ''}
-              </span>
-            </div>
+            <Notice className={error ? 'visible' : 'invisible'}>
+              {error || ''}
+            </Notice>
             <div className="flex gap-2">
               {mode === 'read' ? (
                 <>

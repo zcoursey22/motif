@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Activity,
-  CircleAlert,
-  CornerLeftUp,
-  Disc3,
-  ScanText,
-} from 'lucide-react';
+import { Activity, CornerLeftUp, Disc3, ScanText } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
 import { isEntryValid } from '@/lib/schemas/session';
@@ -19,6 +13,7 @@ import { EntryTable } from './EntryTable';
 import { useEntryRows } from '@/hooks/useEntryRows';
 import { CollapsibleText } from './ui/CollapsibleText';
 import { ConfirmModal } from './ui/ConfirmModal';
+import { Notice } from './ui/Notice';
 
 export default function CaptureForm() {
   const [rawText, setRawText] = useState('');
@@ -198,25 +193,18 @@ export default function CaptureForm() {
         </div>
       )}
       {!isParsing && parseFailed && (
-        <div className="text-red-500 dark:text-red-400 inline-flex items-center gap-2">
-          <CircleAlert />
-          <span className="text-neutral-600 dark:text-neutral-300">
-            {getErrorMessage((parseError as AppError).code)}
-          </span>
-        </div>
+        <Notice>{getErrorMessage((parseError as AppError).code)}</Notice>
       )}
       {!isParsing && !parseFailed && parseSuccessful && (
         <>
           {hasCreateErrored && (
-            <div
-              className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2
-                ${createFailed && !isSubmitting ? 'visible' : 'invisible'}`}
+            <Notice
+              className={
+                createFailed && !isSubmitting ? 'visible' : 'invisible'
+              }
             >
-              <CircleAlert />
-              <span className="text-neutral-600 dark:text-neutral-300">
-                {getErrorMessage((createError as AppError).code)}
-              </span>
-            </div>
+              {getErrorMessage((createError as AppError).code)}
+            </Notice>
           )}
           <div className="flex flex-col w-full mb-4">
             <div className="flex items-center justify-end gap-4 pb-2">

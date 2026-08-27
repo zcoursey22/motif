@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import { CircleAlert } from 'lucide-react';
+import { Notice } from '@/components/ui/Notice';
 
 export default function SessionsError({
   reset,
@@ -11,14 +11,7 @@ export default function SessionsError({
 }) {
   return (
     <div className="flex flex-col items-center gap-4 pt-4">
-      <div
-        className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2`}
-      >
-        <CircleAlert />
-        <span className="text-neutral-600 dark:text-neutral-300">
-          Something went wrong loading your sessions.
-        </span>
-      </div>
+      <Notice>Something went wrong loading your dashboard.</Notice>
       <Button color="brand" onClick={reset}>
         Try again
       </Button>

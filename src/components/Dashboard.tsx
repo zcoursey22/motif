@@ -3,10 +3,11 @@
 import { useSessions } from '@/hooks/useSessions';
 import { Focus, Instrument } from '@/lib/constants';
 import { AppError, getErrorMessage } from '@/lib/utils/api';
-import { CircleAlert, Disc3 } from 'lucide-react';
+import { Disc3 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import NewSessionButton from './NewSessionButton';
 import { filterSessions } from '@/lib/utils/session';
+import { Notice } from './ui/Notice';
 
 export default function Dashboard() {
   const { data: sessions, isLoading, isError, error } = useSessions();
@@ -27,14 +28,9 @@ export default function Dashboard() {
 
   if (isError)
     return (
-      <div
-        className={`text-red-500 dark:text-red-400 inline-flex justify-center items-center gap-2 pt-4`}
-      >
-        <CircleAlert />
-        <span className="text-neutral-600 dark:text-neutral-300">
-          {getErrorMessage((error as AppError).code)}
-        </span>
-      </div>
+      <Notice className="pt-4">
+        {getErrorMessage((error as AppError).code)}
+      </Notice>
     );
 
   if (isLoading)
