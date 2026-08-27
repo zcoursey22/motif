@@ -160,20 +160,20 @@ export default function SessionList() {
           </span>
         </div>
       </div>
-      <ul className="flex flex-col gap-4 w-4xl px-16">
-        {visible.length === 0 ? (
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-neutral-500 dark:text-neutral-400">
-              {"Your current filters didn\'t match any sessions."}
-            </span>
-            <div className="flex justify-center">
-              <Button color="brand" onClick={resetFilters}>
-                Reset filters
-              </Button>
-            </div>
+      {visible.length === 0 ? (
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-neutral-500 dark:text-neutral-400">
+            No sessions match your current filters.
+          </span>
+          <div className="flex justify-center">
+            <Button color="brand" onClick={resetFilters}>
+              Clear filters
+            </Button>
           </div>
-        ) : (
-          visible.map(session => (
+        </div>
+      ) : (
+        <ul className="flex flex-col gap-4 w-4xl px-16">
+          {visible.map(session => (
             <li key={session.id}>
               <SessionCard
                 session={session}
@@ -181,9 +181,9 @@ export default function SessionList() {
                 setIsSomeSessionBeingEdited={setIsEditingSession}
               />
             </li>
-          ))
-        )}
-      </ul>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
