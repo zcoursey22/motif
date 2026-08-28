@@ -1,6 +1,12 @@
 'use client';
 
-import { Activity, CornerLeftUp, Disc3, ScanText } from 'lucide-react';
+import {
+  Activity,
+  CornerLeftUp,
+  Disc3,
+  NotebookPen,
+  ScanText,
+} from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useParse } from '../hooks/useParse';
 import { isEntryValid } from '@/lib/schemas/session';
@@ -234,7 +240,7 @@ export default function CaptureForm() {
                 />
               </div>
               {isSubmitting ? (
-                <div className=" inline-flex items-center justify-center gap-2 text-indigo-400 dark:text-indigo-300 w-22">
+                <div className=" inline-flex items-center justify-center gap-2 text-indigo-400 dark:text-indigo-300 w-15">
                   <Disc3
                     size={40}
                     strokeWidth={1.5}
@@ -248,8 +254,7 @@ export default function CaptureForm() {
                   aria-disabled={!rows.length || isSubmitting}
                   onClick={handleCreate}
                   aria-label="Create session"
-                  className="w-22"
-                  icon={Activity}
+                  className="w-15"
                 >
                   Log
                 </Button>

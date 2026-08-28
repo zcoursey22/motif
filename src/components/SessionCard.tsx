@@ -6,7 +6,7 @@ import { getSessions } from '@/lib/actions/sessions';
 import { EntryTable } from './EntryTable';
 import { Button, IconButton } from './ui/Button';
 import { useEntryRows } from '@/hooks/useEntryRows';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Pencil, Trash2 } from 'lucide-react';
 import { parseLocalDate } from '@/lib/utils/date';
 import { useDeleteSession, useUpdateSession } from '@/hooks/useSessions';
 import { CollapsibleText } from './ui/CollapsibleText';
@@ -193,7 +193,7 @@ export default function SessionCard({
                     aria-label="Edit session"
                     isBusyUnstyled={!isSomeSessionBeingEdited}
                   >
-                    <Edit />
+                    <Pencil />
                   </IconButton>
                   <IconButton
                     variant="ghost"

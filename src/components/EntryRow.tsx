@@ -3,7 +3,7 @@
 import { EditableEntry } from '@/lib/schemas/session';
 import { MultiSelect } from './ui/MultiSelect';
 import { IconButton } from './ui/Button';
-import { X } from 'lucide-react';
+import { MinusCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import { StarRating } from './StarRating';
 import {
@@ -153,7 +153,7 @@ export function EntryRow({
           }}
           aria-label="Delete row"
           aria-disabled={!canRemove}
-          icon={X}
+          icon={MinusCircle}
         />
       )}
     </div>

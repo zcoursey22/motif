@@ -4,7 +4,7 @@ import { EditableEntry, isEntryValid } from '@/lib/schemas/session';
 import { AppError } from '@/lib/utils/api';
 import { EntryRow } from './EntryRow';
 import { Button } from './ui/Button';
-import { Plus } from 'lucide-react';
+import { MinusCircle, Plus, PlusCircle } from 'lucide-react';
 import { Notice } from './ui/Notice';
 
 type EntryTableProps = {
@@ -111,7 +111,7 @@ export function EntryTable({
                 if (rows.length < MAX_ROWS && !isBusy) onAdd?.();
               }}
               aria-disabled={rows.length >= MAX_ROWS}
-              icon={Plus}
+              icon={PlusCircle}
             >
               Add entry
             </Button>
