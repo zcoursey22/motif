@@ -140,11 +140,15 @@ export default function CaptureForm() {
       />
       <div
         onClick={handleTextAreaContainerClick}
-        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl bg-white dark:bg-black ${
-          isRawTextAreaLocked
-            ? 'cursor-default p-2 read-only:field-busy'
-            : 'cursor-text shadow-sm focus-within:shadow-lg p-4 pt-6'
-        }`}
+        className={`input-wrapper flex flex-col gap-2 justify-center items-stretch w-full rounded-3xl bg-white dark:bg-black
+          outline-2 outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500
+          shadow-[0_0_15px_-3px_var(--color-indigo-500),0_0_6px_-4px_var(--color-indigo-500)]
+              dark:shadow-[0_0_15px_-3px_var(--color-indigo-400),0_0_6px_-4px_var(--color-indigo-400)]
+              ${
+                isRawTextAreaLocked
+                  ? 'cursor-default p-2 read-only:field-busy'
+                  : `cursor-text p-4 pt-6`
+              }`}
       >
         {isRawTextAreaLocked ? (
           <CollapsibleText
@@ -234,9 +238,9 @@ export default function CaptureForm() {
                   onChange={e => setOccurredOn(e.target.value)}
                   aria-disabled={isSubmitting}
                   readOnly={isSubmitting}
-                  className={`bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 read-only:field-busy focus-within:outline-2 has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400 focus-within:outline-blue-500 dark:focus-within:outline-blue-400 ${
-                    isSubmitting ? 'cursor-default' : 'cursor-text'
-                  }`}
+                  className={`bg-white dark:bg-black rounded-2xl px-4 py-2 read-only:field-busy
+                    outline-2 outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500
+                    ${isSubmitting ? 'cursor-default' : 'cursor-text'}`}
                 />
               </div>
               {isSubmitting ? (

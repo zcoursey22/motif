@@ -25,7 +25,7 @@ type MultiSelectProps<T extends string> = {
 function Chip({ label, readOnly }: { label: string; readOnly: boolean }) {
   return (
     <span
-      className={`shrink-0 inline-flex items-center font-medium text-sm px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200
+      className={`shrink-0 inline-flex items-center font-medium text-sm outline-2 px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-indigo-300 dark:outline-indigo-700
     ${readOnly ? 'cursor-pointer' : 'cursor-default'}`}
     >
       {label}
@@ -206,7 +206,7 @@ export function MultiSelect<T extends string>({
         focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
         ${
           showClear
-            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-transparent'
+            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-200 outline-indigo-300 dark:outline-indigo-700'
             : 'pr-2.5 bg-transparent text-neutral-500 dark:text-neutral-400 outline-neutral-300 dark:outline-neutral-700'
         }
         ${disabled ? 'field-busy cursor-default' : `cursor-pointer ${showClear ? '' : 'hover:bg-neutral-300 dark:hover:bg-neutral-700'}`}`}
@@ -255,12 +255,12 @@ export function MultiSelect<T extends string>({
           setOpen(o => !o);
         }
       }}
-      className={`input-wrapper flex items-center outline-2 pl-2 outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
-        ${readOnly ? '' : `bg-white dark:bg-black focus-within:shadow-md rounded-2xl ${open ? 'shadow-md' : 'shadow-xs'}`}
-        ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent'}
+      className={`input-wrapper flex items-center pl-2 outline-1 focus-within:outline-2
+        ${readOnly ? '' : `bg-white dark:bg-black rounded-2xl`}
+        ${error ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500'}
         ${disabled ? 'field-busy pointer-events-none' : ''}`}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">
         {renderSummary()}
       </div>
 

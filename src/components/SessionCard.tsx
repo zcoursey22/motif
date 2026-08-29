@@ -162,7 +162,7 @@ export default function SessionCard({
         onCancel={() => setConfirmDeleteModalOpen(false)}
       />
       <div
-        className={`flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-900 rounded-3xl shadow-sm
+        className={`flex flex-col gap-2 bg-neutral-100 dark:bg-neutral-900 rounded-3xl outline-1 outline-neutral-200 dark:outline-neutral-800 shadow-md dark:shadow-md/30
       ${isBusy ? 'field-busy' : ''}`}
       >
         <div

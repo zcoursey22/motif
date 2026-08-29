@@ -105,14 +105,19 @@ export default function Dashboard() {
           {[1, 2, 3].map(c => (
             <div
               key={c}
-              className="flex flex-col items-center bg-neutral-100 dark:bg-neutral-900 px-6 py-4 rounded-2xl shadow-sm"
+              className="flex flex-col items-center bg-neutral-100 dark:bg-neutral-900 px-6 py-4 rounded-2xl outline-1 outline-neutral-200 dark:outline-neutral-800 shadow-md dark:shadow-md/30"
             >
               <span>Computed insight {c}</span>
               <span>Value</span>
             </div>
           ))}
         </div>
-        <div className="flex bg-neutral-100 dark:bg-neutral-900 pr-4 pl-6 py-4 rounded-2xl shadow-sm items-center justify-between border-2 border-indigo-300 dark:border-indigo-700">
+        <div
+          className="flex bg-neutral-100 dark:bg-neutral-900 pr-4 pl-6 py-4 rounded-2xl items-center justify-between
+          outline-1 outline-neutral-200 dark:outline-neutral-800
+          shadow-[0_4px_6px_-1px_rgb(0_0_0_/0.1),0_2px_4px_-2px_rgb(0_0_0_/0.1),0_0_15px_-3px_var(--color-indigo-500),0_0_6px_-4px_var(--color-indigo-500)]
+          dark:shadow-[0_4px_6px_-1px_rgb(0_0_0_/0.3),0_2px_4px_-2px_rgb(0_0_0_/0.3),0_0_15px_-3px_var(--color-indigo-400),0_0_6px_-4px_var(--color-indigo-400)]"
+        >
           <span>
             Get deeper analysis to see patterns and connections across your
             practice.
@@ -132,7 +137,7 @@ export default function Dashboard() {
                 e.target.value as keyof typeof DATE_RANGE_PRESETS
               )
             }
-            className="bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2 outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400"
+            className="bg-white dark:bg-black rounded-2xl px-4 py-2 outline-2 outline-transparent focus-visible:outline-neutral-400 dark:focus-visible:outline-neutral-500"
             aria-label="Date range"
           >
             {Object.entries(DATE_RANGE_PRESETS).map(([key, { label }]) => (
@@ -183,7 +188,8 @@ export default function Dashboard() {
             {[1, 2, 3, 4, 5, 6].map(c => (
               <div
                 key={c}
-                className="h-72 rounded-2xl bg-neutral-100 dark:bg-neutral-900 shadow-sm p-4 text-neutral-500 dark:text-neutral-400"
+                className={`h-72 rounded-2xl bg-neutral-100 dark:bg-neutral-900 p-4 text-neutral-500 dark:text-neutral-400
+                  outline-1 outline-neutral-200 dark:outline-neutral-800 shadow-md dark:shadow-md/30`}
               >
                 <span>Chart {c}</span>
               </div>

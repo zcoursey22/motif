@@ -91,7 +91,8 @@ export default function SessionList() {
         <div className="flex gap-2 items-center">
           <div
             onClick={handleSearchInputContainerClick}
-            className={`flex gap-2 items-center justify-center shadow-xs focus-within:shadow-md rounded-2xl bg-white dark:bg-black cursor-text has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400
+            className={`flex gap-2 items-center justify-center rounded-2xl bg-white dark:bg-black cursor-text
+              outline-2 outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500
               ${isEditingSession ? 'field-busy pointer-events-none' : ''}`}
           >
             <div className="pl-4" onClick={handleSearchInputContainerClick}>

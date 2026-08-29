@@ -78,16 +78,13 @@ export function EntryRow({
           });
         }}
         className={`placeholder-neutral-300 dark:placeholder-neutral-600
-          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2 outline-2
+          bg-white dark:bg-black rounded-2xl px-4 py-2 outline-1 focus-within:outline-2
                       aria-disabled:field-busy aria-disabled:cursor-default aria-disabled:point-events-none
-                      focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400
-                      ${
-                        isInvalid
-                          ? 'outline-red-500 dark:outline-red-400'
-                          : 'outline-transparent focus:outline-transparent focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400'
-                      }`}
+                      ${isInvalid ? 'outline-red-500 dark:outline-red-400' : 'outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500'}
+        `}
         aria-disabled={isBusy}
         aria-label="Instrument"
+        aria-invalid={isInvalid}
       >
         <option value=""></option>
         <option value="voice">Voice</option>
@@ -111,7 +108,7 @@ export function EntryRow({
         ariaLabel="Focus"
       />
       <div
-        className={`flex items-stretch justify-center bg-white dark:bg-black shadow-xs focus-within:shadow-md rounded-2xl px-4 py-2 has-focus-visible:outline-2 has-focus-visible:outline-blue-500 dark:has-focus-visible:outline-blue-400 ${
+        className={`flex items-stretch justify-center bg-white dark:bg-black rounded-2xl px-4 py-2 outline-2 outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500 ${
           isBusy ? 'field-busy' : ''
         }`}
       >
@@ -136,11 +133,10 @@ export function EntryRow({
         }}
         disabled={isBusy}
         className={`placeholder-neutral-300 dark:placeholder-neutral-600
-          bg-white dark:bg-black shadow-xs focus:shadow-md rounded-2xl px-4 py-2
+          bg-white dark:bg-black rounded-2xl px-4 py-2
                       read-only:field-busy
-                      focus-visible:outline-2 focus-visible:outline-blue-500 dark:focus-visible:outline-blue-400`}
+                      outline-2 outline-transparent focus-within:outline-neutral-400 focus-within:dark:outline-neutral-500`}
         aria-label="Duration"
-        // TODO: Why can't I get no outline on focus, but outline on focus-visible for this field only?
       />
       {!isBusy && mode === 'edit' && (
         <IconButton

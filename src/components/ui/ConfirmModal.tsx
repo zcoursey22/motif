@@ -43,7 +43,7 @@ export function ConfirmModal({
         onClick={onCancel}
       >
         <div
-          className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 p-6 shadow-md border-2 border-neutral-300 dark:border-neutral-700"
+          className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 p-6 shadow-md dark:shadow-md/30 border-2 border-neutral-300 dark:border-neutral-700"
           onClick={e => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
