@@ -8,6 +8,8 @@
   --toast-bg: var(--color-neutral-100);
   --toast-fg: var(--color-neutral-600);
   --toast-border-color: var(--color-neutral-300);
+  --chart-fg: var(--color-indigo-400);
+  --chart-tooltip-cursor-bg: var(--color-neutral-500);
 }
 
 @theme {
@@ -25,6 +27,8 @@
     --toast-bg: var(--color-neutral-900);
     --toast-fg: var(--color-neutral-300);
     --toast-border-color: var(--color-neutral-700);
+    --chart-fg: var(--color-indigo-500);
+    --chart-tooltip-cursor-bg: var(--color-neutral-400);
   }
 }
 

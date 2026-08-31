@@ -17,18 +17,42 @@ import { filterEntries, filterSessions } from '@/lib/utils/session';
 import { Notice } from './ui/Notice';
 import { MultiSelect } from './ui/MultiSelect';
 import { Button } from './ui/Button';
-import { DATE_RANGE_PRESETS } from '@/lib/utils/date';
+import { DATE_RANGE_PRESETS, parseLocalDate } from '@/lib/utils/date';
+import ActivityChart from './dashboard/charts/ActivityChart';
+import { TimeBucket } from '@/lib/summary';
 
-const DEFAULT_DATE_RANGE_PRESET = 'all';
+function bucketForStart(start: Date): TimeBucket {
+  const days = (new Date().getTime() - start.getTime()) / 86_400_000;
+  if (days <= 31) return 'day';
+  if (days <= 365 / 2) return 'week';
+  if (days <= 365 * 2) return 'month';
+  return 'year';
+}
 
 export default function Dashboard() {
   const { data: sessions, isLoading, isError, error } = useSessions();
 
-  const [dateRangePreset, setDateRangePreset] = useState<
-    keyof typeof DATE_RANGE_PRESETS
-  >(DEFAULT_DATE_RANGE_PRESET);
+  const [dateRangePreset, setDateRangePreset] =
+    useState<keyof typeof DATE_RANGE_PRESETS>('all');
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [focuses, setFocuses] = useState<Focus[]>([]);
+
+  const dateRangeStart = useMemo(() => {
+    const end = new Date();
+    const presetStart = DATE_RANGE_PRESETS[dateRangePreset].start();
+    if (presetStart) return presetStart;
+    if (!sessions?.length) return end;
+    const earliest = sessions.reduce(
+      (min, s) => (s.occurredOn < min ? s.occurredOn : min),
+      sessions[0].occurredOn
+    );
+    return parseLocalDate(earliest);
+  }, [sessions, dateRangePreset]);
+
+  const bucket = useMemo(
+    () => bucketForStart(dateRangeStart),
+    [dateRangeStart]
+  );
 
   const filteredSessions = useMemo(
     () =>
@@ -36,10 +60,10 @@ export default function Dashboard() {
         ? filterSessions(sessions, {
             instruments,
             focuses,
-            start: DATE_RANGE_PRESETS[dateRangePreset].start(),
+            start: dateRangeStart,
           })
         : [],
-    [sessions, instruments, focuses, dateRangePreset]
+    [sessions, instruments, focuses, dateRangeStart]
   );
   const filteredEntries = useMemo(
     () =>
@@ -47,10 +71,10 @@ export default function Dashboard() {
         ? filterEntries(sessions, {
             instruments,
             focuses,
-            start: DATE_RANGE_PRESETS[dateRangePreset].start(),
+            start: dateRangeStart,
           })
         : [],
-    [sessions, instruments, focuses, dateRangePreset]
+    [sessions, instruments, focuses, dateRangeStart]
   );
 
   const hasFilters = instruments.length > 0 || focuses.length > 0;
@@ -88,15 +112,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3 pt-4">
-      <div className="flex flex-col gap-3 w-3xl border-b-2 pb-5 border-neutral-300 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400">
+    <div className="flex flex-col items-center gap-6 pt-4">
+      <div className="flex flex-col gap-6 w-3xl border-b-2 pb-8 border-neutral-300 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400">
         <div className="flex justify-between">
           <span className="text-left">Insights are based on all data</span>
           <div className="flex gap-6">
-            <span>{filteredSessions.length} sessions</span>
+            <span>{sessions.length} sessions</span>
             <span>
-              {filteredSessions.reduce((n, s) => n + s.entries.length, 0)}{' '}
-              entries
+              {sessions.reduce((n, s) => n + s.entries.length, 0)} entries
             </span>
           </div>
         </div>
@@ -185,15 +208,11 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 w-4xl px-16">
-            {[1, 2, 3, 4, 5, 6].map(c => (
-              <div
-                key={c}
-                className={`h-72 rounded-2xl bg-neutral-100 dark:bg-neutral-900 p-4 text-neutral-500 dark:text-neutral-400
-                  outline-1 outline-neutral-200 dark:outline-neutral-800 shadow-md dark:shadow-md/30`}
-              >
-                <span>Chart {c}</span>
-              </div>
-            ))}
+            <ActivityChart
+              sessions={filteredSessions}
+              bucket={bucket}
+              start={dateRangeStart}
+            />
           </div>
         )}
       </div>
