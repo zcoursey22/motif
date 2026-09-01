@@ -20,6 +20,11 @@ import { Button } from './ui/Button';
 import { DATE_RANGE_PRESETS, parseLocalDate } from '@/lib/utils/date';
 import ActivityChart from './dashboard/charts/ActivityChart';
 import { TimeBucket } from '@/lib/summary';
+import {
+  TopInstrumentsCard,
+  TopFocusesCard,
+  ConsistencyCard,
+} from './dashboard/insights';
 
 function bucketForStart(start: Date): TimeBucket {
   const days = (new Date().getTime() - start.getTime()) / 86_400_000;
@@ -125,15 +130,9 @@ export default function Dashboard() {
         </div>
 
         <div className="flex gap-3 justify-center">
-          {[1, 2, 3].map(c => (
-            <div
-              key={c}
-              className="flex flex-col items-center bg-neutral-100 dark:bg-neutral-900 px-6 py-4 rounded-2xl outline-1 outline-neutral-200 dark:outline-neutral-800 shadow-md dark:shadow-md/30"
-            >
-              <span>Computed insight {c}</span>
-              <span>Value</span>
-            </div>
-          ))}
+          <TopInstrumentsCard sessions={sessions} />
+          <ConsistencyCard sessions={sessions} />
+          <TopFocusesCard sessions={sessions} />
         </div>
         <div
           className="flex bg-neutral-100 dark:bg-neutral-900 pr-4 pl-6 py-4 rounded-2xl items-center justify-between
