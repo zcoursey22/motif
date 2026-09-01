@@ -23,6 +23,7 @@ import {
   GRID_PROPS,
   TOOLTIP_CURSOR,
 } from '@/lib/chartTheme';
+import { EntryWithDate } from '@/lib/utils/session';
 
 type Metric = 'sessions' | 'entries' | 'minutes';
 
@@ -41,17 +42,19 @@ function formatTick(value: unknown): string {
 
 export default function ActivityChart({
   sessions,
+  entries,
   bucket,
   start,
 }: {
   sessions: SessionWithEntries[];
+  entries: EntryWithDate[];
   bucket: TimeBucket;
   start: Date;
 }) {
-  const [metric, setMetric] = useState<Metric>('sessions');
+  const [metric, setMetric] = useState<Metric>('entries');
   const data = useMemo(
-    () => activityTrend(sessions, bucket, start),
-    [sessions, bucket, start]
+    () => activityTrend(sessions, entries, bucket, start),
+    [sessions, entries, bucket, start]
   );
 
   const toggle = (

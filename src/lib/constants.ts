@@ -10,6 +10,13 @@ export const SelfRating = {
 } as const;
 export type SelfRating = (typeof SelfRating)[keyof typeof SelfRating];
 
+export const RATING_ORDER = [
+  SelfRating.POOR,
+  SelfRating.BELOW,
+  SelfRating.ABOVE,
+  SelfRating.STRONG,
+] as const;
+
 // INSTRUMENT
 
 export const Instrument = {

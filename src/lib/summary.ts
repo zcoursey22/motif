@@ -1,13 +1,20 @@
-import { SessionWithEntries } from './schemas/session';
+import { Entry, SessionWithEntries } from './schemas/session';
 import { toLocalDateString, parseLocalDate } from './utils/date';
-import { Focus, Instrument, isStyle } from './constants';
+import { Focus, Instrument, isStyle, RATING_ORDER } from './constants';
+import { EntryWithDate } from './utils/session';
 
 export type TimeBucket = 'day' | 'week' | 'month' | 'year';
 
 function bucketKey(occurredOn: string, bucket: TimeBucket): string {
   if (bucket === 'day') return occurredOn;
   const date = parseLocalDate(occurredOn);
-  date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+  if (bucket === 'week') {
+    date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+  } else if (bucket === 'month') {
+    date.setDate(1);
+  } else {
+    date.setMonth(0, 1);
+  }
   return toLocalDateString(date);
 }
 
@@ -15,11 +22,16 @@ function startOfBucket(date: Date, bucket: TimeBucket): Date {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   if (bucket === 'week') d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  else if (bucket === 'month') d.setDate(1);
+  else if (bucket === 'year') d.setMonth(0, 1);
   return d;
 }
 
 function advanceBucket(date: Date, bucket: TimeBucket): void {
-  date.setDate(date.getDate() + (bucket === 'day' ? 1 : 7));
+  if (bucket === 'day') date.setDate(date.getDate() + 1);
+  else if (bucket === 'week') date.setDate(date.getDate() + 7);
+  else if (bucket === 'month') date.setMonth(date.getMonth() + 1);
+  else date.setFullYear(date.getFullYear() + 1);
 }
 
 export type ActivityPoint = {
@@ -31,6 +43,7 @@ export type ActivityPoint = {
 
 export function activityTrend(
   sessions: SessionWithEntries[],
+  entries: EntryWithDate[],
   bucket: TimeBucket,
   start: Date,
   end: Date = new Date()
@@ -47,13 +60,14 @@ export function activityTrend(
 
   for (const s of sessions) {
     const point = byBucket.get(bucketKey(s.occurredOn, bucket));
+    if (point) point.sessions += 1;
+  }
+
+  for (const e of entries) {
+    const point = byBucket.get(bucketKey(e.occurredOn, bucket));
     if (!point) continue;
-    point.sessions += 1;
-    point.entries += s.entries.length;
-    point.minutes += s.entries.reduce(
-      (sum, e) => sum + (e.durationMin ?? 0),
-      0
-    );
+    point.entries += 1;
+    point.minutes += e.durationMin ?? 0;
   }
 
   return [...byBucket.values()].sort((a, b) => a.date.localeCompare(b.date));
@@ -62,35 +76,31 @@ export function activityTrend(
 export type Ranked<T> = { key: T; count: number };
 
 export function topInstruments(
-  sessions: SessionWithEntries[],
-  limit = 3
+  entries: Entry[],
+  limit?: number
 ): Ranked<Instrument>[] {
   const counts = new Map<Instrument, number>();
-  for (const s of sessions) {
-    for (const e of s.entries) {
-      if (!e.instrument) continue;
-      counts.set(e.instrument, (counts.get(e.instrument) ?? 0) + 1);
-    }
+  for (const e of entries) {
+    if (!e.instrument) continue;
+    counts.set(e.instrument, (counts.get(e.instrument) ?? 0) + 1);
   }
-  return rankTop(counts, limit);
+  return rankTop(counts, limit || Infinity);
 }
 
 export function topFocuses(
-  sessions: SessionWithEntries[],
-  limit = 3,
+  entries: Entry[],
+  limit?: number,
   filter?: 'style' | 'activity'
 ): Ranked<Focus>[] {
   const counts = new Map<Focus, number>();
-  for (const s of sessions) {
-    for (const e of s.entries) {
-      for (const f of e.focus) {
-        if (filter === 'style' && !isStyle(f)) continue;
-        if (filter === 'activity' && isStyle(f)) continue;
-        counts.set(f, (counts.get(f) ?? 0) + 1);
-      }
+  for (const e of entries) {
+    for (const f of e.focus) {
+      if (filter === 'style' && !isStyle(f)) continue;
+      if (filter === 'activity' && isStyle(f)) continue;
+      counts.set(f, (counts.get(f) ?? 0) + 1);
     }
   }
-  return rankTop(counts, limit);
+  return rankTop(counts, limit || Infinity);
 }
 
 function rankTop<T>(counts: Map<T, number>, limit: number): Ranked<T>[] {
@@ -109,7 +119,7 @@ export function consistency(
 ): Consistency {
   const cutoff = new Date(asOf);
   cutoff.setHours(0, 0, 0, 0);
-  cutoff.setDate(cutoff.getDate() - (window - 1)); // inclusive window
+  cutoff.setDate(cutoff.getDate() - (window - 1));
 
   const days = new Set<string>();
   for (const s of sessions) {
@@ -147,4 +157,44 @@ export function weeklyStreak(
     cursor.setDate(cursor.getDate() - 7);
   }
   return streak;
+}
+
+export type RatingPoint = {
+  date: string;
+  avg: number | null;
+  count: number;
+};
+
+export function ratingTrend(
+  entries: EntryWithDate[],
+  bucket: TimeBucket,
+  start: Date,
+  end: Date = new Date()
+): RatingPoint[] {
+  const acc = new Map<string, { sum: number; count: number }>();
+
+  const cursor = startOfBucket(start, bucket);
+  const last = startOfBucket(end, bucket);
+  while (cursor <= last) {
+    acc.set(toLocalDateString(cursor), { sum: 0, count: 0 });
+    advanceBucket(cursor, bucket);
+  }
+
+  for (const e of entries) {
+    if (e.selfRating == null) continue;
+    const slot = acc.get(bucketKey(e.occurredOn, bucket));
+    if (!slot) continue;
+    const idx = RATING_ORDER.indexOf(e.selfRating);
+    if (idx < 0) continue;
+    slot.sum += idx;
+    slot.count += 1;
+  }
+
+  return [...acc.entries()]
+    .map(([date, { sum, count }]) => ({
+      date,
+      avg: count > 0 ? sum / count : null,
+      count,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }

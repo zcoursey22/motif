@@ -1,4 +1,4 @@
-import { SessionWithEntries } from '@/lib/schemas/session';
+import { Entry, SessionWithEntries } from '@/lib/schemas/session';
 import {
   topInstruments,
   topFocuses,
@@ -40,12 +40,8 @@ function RankedList<T extends string>({
   );
 }
 
-export function TopInstrumentsCard({
-  sessions,
-}: {
-  sessions: SessionWithEntries[];
-}) {
-  const items = useMemo(() => topInstruments(sessions), [sessions]);
+export function TopInstrumentsCard({ entries }: { entries: Entry[] }) {
+  const items = useMemo(() => topInstruments(entries, 3), [entries]);
   return (
     <InsightCard title="Top instruments">
       <RankedList items={items} labels={INSTRUMENT_LABELS} />
@@ -53,14 +49,10 @@ export function TopInstrumentsCard({
   );
 }
 
-export function TopFocusesCard({
-  sessions,
-}: {
-  sessions: SessionWithEntries[];
-}) {
-  const items = useMemo(() => topFocuses(sessions), [sessions]);
+export function TopFocusesCard({ entries }: { entries: Entry[] }) {
+  const items = useMemo(() => topFocuses(entries, 3), [entries]);
   return (
-    <InsightCard title="Top focuses">
+    <InsightCard title="Top focus areas">
       <RankedList items={items} labels={FOCUS_LABELS} />
     </InsightCard>
   );
@@ -80,15 +72,16 @@ export function ConsistencyCard({
   return (
     <InsightCard title="Consistency">
       <div className="flex flex-col gap-1">
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-1.5">
           <span className="text-lg font-semibold text-neutral-600 dark:text-neutral-300">
             {daysPracticed}
           </span>
           <span className="text-sm text-neutral-500 dark:text-neutral-400">
-            of the last <span className="font-medium">{window}</span> days
+            sessions over last <span className="font-medium">{window}</span>{' '}
+            days
           </span>
         </div>
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-1.5">
           <span className="text-lg font-semibold text-neutral-600 dark:text-neutral-300">
             {streak}
           </span>

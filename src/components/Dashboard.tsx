@@ -19,12 +19,14 @@ import { MultiSelect } from './ui/MultiSelect';
 import { Button } from './ui/Button';
 import { DATE_RANGE_PRESETS, parseLocalDate } from '@/lib/utils/date';
 import ActivityChart from './dashboard/charts/ActivityChart';
-import { TimeBucket } from '@/lib/summary';
+import { TimeBucket, topFocuses, topInstruments } from '@/lib/summary';
 import {
   TopInstrumentsCard,
   TopFocusesCard,
   ConsistencyCard,
 } from './dashboard/insights';
+import RatingChart from './dashboard/charts/RatingChart';
+import BreakdownChart from './dashboard/charts/BreakdownChart';
 
 function bucketForStart(start: Date): TimeBucket {
   const days = (new Date().getTime() - start.getTime()) / 86_400_000;
@@ -70,6 +72,10 @@ export default function Dashboard() {
         : [],
     [sessions, instruments, focuses, dateRangeStart]
   );
+  const entries = useMemo(
+    () => sessions?.flatMap(({ entries }) => entries) || [],
+    [sessions]
+  );
   const filteredEntries = useMemo(
     () =>
       sessions
@@ -80,6 +86,15 @@ export default function Dashboard() {
           })
         : [],
     [sessions, instruments, focuses, dateRangeStart]
+  );
+
+  const entryInstrumentBreakdown = useMemo(
+    () => topInstruments(filteredEntries),
+    [filteredEntries]
+  );
+  const entryFocusBreakdown = useMemo(
+    () => topFocuses(filteredEntries),
+    [filteredEntries]
   );
 
   const hasFilters = instruments.length > 0 || focuses.length > 0;
@@ -130,9 +145,9 @@ export default function Dashboard() {
         </div>
 
         <div className="flex gap-3 justify-center">
-          <TopInstrumentsCard sessions={sessions} />
+          <TopInstrumentsCard entries={entries} />
           <ConsistencyCard sessions={sessions} />
-          <TopFocusesCard sessions={sessions} />
+          <TopFocusesCard entries={entries} />
         </div>
         <div
           className="flex bg-neutral-100 dark:bg-neutral-900 pr-4 pl-6 py-4 rounded-2xl items-center justify-between
@@ -209,8 +224,26 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-4 w-4xl px-16">
             <ActivityChart
               sessions={filteredSessions}
+              entries={filteredEntries}
               bucket={bucket}
               start={dateRangeStart}
+            />
+            <RatingChart
+              entries={filteredEntries}
+              bucket={bucket}
+              start={dateRangeStart}
+            />
+            <BreakdownChart
+              title="Instruments"
+              data={entryInstrumentBreakdown}
+              labels={INSTRUMENT_LABELS}
+              noun="entries"
+            />
+            <BreakdownChart
+              title="Focus areas"
+              data={entryFocusBreakdown}
+              labels={FOCUS_LABELS}
+              noun="entries"
             />
           </div>
         )}
