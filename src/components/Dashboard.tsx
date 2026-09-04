@@ -27,6 +27,7 @@ import {
 } from './dashboard/insights';
 import RatingChart from './dashboard/charts/RatingChart';
 import BreakdownChart from './dashboard/charts/BreakdownChart';
+import { useAnalyze } from '@/hooks/useAnalyze';
 
 function bucketForStart(start: Date): TimeBucket {
   const days = (new Date().getTime() - start.getTime()) / 86_400_000;
@@ -38,6 +39,8 @@ function bucketForStart(start: Date): TimeBucket {
 
 export default function Dashboard() {
   const { data: sessions, isLoading, isError, error } = useSessions();
+
+  const { mutate: analyze } = useAnalyze();
 
   const [dateRangePreset, setDateRangePreset] =
     useState<keyof typeof DATE_RANGE_PRESETS>('all');
@@ -104,6 +107,10 @@ export default function Dashboard() {
     setFocuses([]);
   };
 
+  const handleAnalyze = () => {
+    analyze();
+  };
+
   if (isError)
     return (
       <Notice className="pt-4">
@@ -159,7 +166,7 @@ export default function Dashboard() {
             Get deeper analysis to see patterns and connections across your
             practice.
           </span>
-          <Button icon={Sparkles} color="brand">
+          <Button icon={Sparkles} color="brand" onClick={handleAnalyze}>
             Analyze
           </Button>
         </div>

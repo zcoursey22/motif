@@ -63,7 +63,7 @@ export function ConsistencyCard({
 }: {
   sessions: SessionWithEntries[];
 }) {
-  const { daysPracticed, window } = useMemo(
+  const { daysPracticedWithinWindow, windowDays } = useMemo(
     () => consistency(sessions),
     [sessions]
   );
@@ -74,10 +74,10 @@ export function ConsistencyCard({
       <div className="flex flex-col gap-1">
         <div className="flex items-baseline gap-1.5">
           <span className="text-lg font-semibold text-neutral-600 dark:text-neutral-300">
-            {daysPracticed}
+            {daysPracticedWithinWindow}
           </span>
           <span className="text-sm text-neutral-500 dark:text-neutral-400">
-            sessions over last <span className="font-medium">{window}</span>{' '}
+            sessions over last <span className="font-medium">{windowDays}</span>{' '}
             days
           </span>
         </div>

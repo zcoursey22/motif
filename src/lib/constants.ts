@@ -1,3 +1,5 @@
+export const HAIKU = 'claude-haiku-4-5-20251001';
+
 export const SESSIONS_QUERY_KEY = 'sessions';
 
 // RATING

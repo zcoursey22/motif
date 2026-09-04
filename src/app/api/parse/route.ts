@@ -11,6 +11,7 @@ import { getLocalWeekday, parseLocalDate } from '@/lib/utils/date';
 import { isEntryValid } from '@/lib/schemas/session';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { HAIKU } from '@/lib/constants';
 
 const SYSTEM_PROMPT = `You convert a musician's freeform practice note into structured data.
 
@@ -62,7 +63,7 @@ const parse = async (
   currentDateString: string
 ): Promise<ParseResponse> => {
   const { output } = await generateText({
-    model: anthropic('claude-haiku-4-5-20251001'),
+    model: anthropic(HAIKU),
     output: Output.object({ schema: ParseResponseSchema }),
     system: SYSTEM_PROMPT,
     prompt: `Current local date: ${currentDateString} (${getLocalWeekday(parseLocalDate(currentDateString))})

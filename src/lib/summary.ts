@@ -1,7 +1,95 @@
 import { Entry, SessionWithEntries } from './schemas/session';
 import { toLocalDateString, parseLocalDate } from './utils/date';
-import { Focus, Instrument, isStyle, RATING_ORDER } from './constants';
+import {
+  Focus,
+  Instrument,
+  isStyle,
+  RATING_ORDER,
+  SelfRating,
+} from './constants';
 import { EntryWithDate } from './utils/session';
+
+export type PracticeSummary = {
+  totals: { sessions: number; entries: number; ratedEntries: number };
+  span: { firstSession: string | null; lastSession: string | null };
+  topInstruments: Ranked<Instrument>[];
+  topFocuses: Ranked<Focus>[];
+  consistency: Consistency;
+  weeklyStreak: number;
+  lastPracticed: { instrument: Instrument; daysAgo: number }[];
+  ratingByInstrument: {
+    instrument: Instrument;
+    rating: SelfRating;
+    count: number;
+  }[];
+};
+
+function ratingLabel(avgIndex: number): SelfRating {
+  return RATING_ORDER[Math.round(avgIndex)];
+}
+
+export function assemblePracticeSummary(
+  sessions: SessionWithEntries[],
+  asOf: Date = new Date()
+): PracticeSummary {
+  const entries = sessions.flatMap(s => s.entries);
+
+  const perInstrument = new Map<
+    Instrument,
+    { lastDate: string; ratingSum: number; ratingCount: number }
+  >();
+  for (const s of sessions) {
+    for (const e of s.entries) {
+      if (!e.instrument) continue;
+      const cur = perInstrument.get(e.instrument) ?? {
+        lastDate: s.occurredOn,
+        ratingSum: 0,
+        ratingCount: 0,
+      };
+      if (s.occurredOn > cur.lastDate) cur.lastDate = s.occurredOn;
+      if (e.selfRating != null) {
+        const idx = RATING_ORDER.indexOf(e.selfRating);
+        if (idx >= 0) {
+          cur.ratingSum += idx;
+          cur.ratingCount += 1;
+        }
+      }
+      perInstrument.set(e.instrument, cur);
+    }
+  }
+
+  const dayMs = 86_400_000;
+  const daysAgo = (iso: string) =>
+    Math.floor((asOf.getTime() - parseLocalDate(iso).getTime()) / dayMs);
+
+  const dates = sessions.map(s => s.occurredOn).sort();
+
+  return {
+    totals: {
+      sessions: sessions.length,
+      entries: entries.length,
+      ratedEntries: entries.filter(e => e.selfRating != null).length,
+    },
+    span: {
+      firstSession: dates[0] ?? null,
+      lastSession: dates[dates.length - 1] ?? null,
+    },
+    topInstruments: topInstruments(entries, Infinity),
+    topFocuses: topFocuses(entries, Infinity),
+    consistency: consistency(sessions, 14, asOf),
+    weeklyStreak: weeklyStreak(sessions, asOf),
+    lastPracticed: [...perInstrument.entries()]
+      .map(([instrument, v]) => ({ instrument, daysAgo: daysAgo(v.lastDate) }))
+      .sort((a, b) => b.daysAgo - a.daysAgo),
+    ratingByInstrument: [...perInstrument.entries()]
+      .filter(([, v]) => v.ratingCount > 0)
+      .map(([instrument, v]) => ({
+        instrument,
+        rating: ratingLabel(v.ratingSum / v.ratingCount),
+        count: v.ratingCount,
+      })),
+  };
+}
 
 export type TimeBucket = 'day' | 'week' | 'month' | 'year';
 
@@ -110,23 +198,26 @@ function rankTop<T>(counts: Map<T, number>, limit: number): Ranked<T>[] {
     .slice(0, limit);
 }
 
-export type Consistency = { daysPracticed: number; window: number };
+export type Consistency = {
+  daysPracticedWithinWindow: number;
+  windowDays: number;
+};
 
 export function consistency(
   sessions: SessionWithEntries[],
-  window = 14,
+  windowDays = 14,
   asOf: Date = new Date()
 ): Consistency {
   const cutoff = new Date(asOf);
   cutoff.setHours(0, 0, 0, 0);
-  cutoff.setDate(cutoff.getDate() - (window - 1));
+  cutoff.setDate(cutoff.getDate() - (windowDays - 1));
 
   const days = new Set<string>();
   for (const s of sessions) {
     const d = parseLocalDate(s.occurredOn);
     if (d >= cutoff && d <= asOf) days.add(s.occurredOn);
   }
-  return { daysPracticed: days.size, window };
+  return { daysPracticedWithinWindow: days.size, windowDays };
 }
 
 // Monday of the given date's week
